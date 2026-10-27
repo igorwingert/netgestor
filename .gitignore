@@ -1,0 +1,13 @@
+# Sistema operacional / editores
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Frontend (etapa 7)
+node_modules/
+frontend/dist/
+frontend/.angular/
+
+# Variáveis de ambiente locais
+.env
