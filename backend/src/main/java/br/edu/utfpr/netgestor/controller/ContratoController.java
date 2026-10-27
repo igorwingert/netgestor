@@ -24,6 +24,7 @@ import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -65,6 +66,7 @@ public class ContratoController {
     private final EquipamentoService equipamentoService;
     private final EquipamentoAssembler equipamentoAssembler;
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'ATENDENTE', 'TECNICO')")
     @GetMapping
     public CollectionModel<EntityModel<ContratoResponse>> listar(
             @RequestParam(required = false) StatusContrato status,
@@ -72,11 +74,13 @@ public class ContratoController {
         return contratoAssembler.toCollectionModel(contratoService.listar(status, clienteId));
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'ATENDENTE', 'TECNICO')")
     @GetMapping("/{id}")
     public EntityModel<ContratoResponse> buscarPorId(@PathVariable Long id) {
         return contratoAssembler.toModel(contratoService.buscarPorId(id));
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'ATENDENTE')")
     @PostMapping
     public ResponseEntity<EntityModel<ContratoResponse>> cadastrar(@RequestBody @Valid ContratoRequest request) {
         EntityModel<ContratoResponse> model = contratoAssembler.toModel(contratoService.cadastrar(request));
@@ -84,11 +88,13 @@ public class ContratoController {
         return ResponseEntity.created(model.getRequiredLink(IanaLinkRelations.SELF).toUri()).body(model);
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'ATENDENTE')")
     @PutMapping("/{id}")
     public EntityModel<ContratoResponse> atualizar(@PathVariable Long id, @RequestBody @Valid ContratoRequest request) {
         return contratoAssembler.toModel(contratoService.atualizar(id, request));
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'ATENDENTE')")
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void excluir(@PathVariable Long id) {
@@ -97,16 +103,19 @@ public class ContratoController {
 
     // ---- Ações (PATCH): devolvem o contrato com o novo status e os novos links ----
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'ATENDENTE')")
     @PatchMapping("/{id}/suspender")
     public EntityModel<ContratoResponse> suspender(@PathVariable Long id) {
         return contratoAssembler.toModel(contratoService.suspender(id));
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'ATENDENTE')")
     @PatchMapping("/{id}/reativar")
     public EntityModel<ContratoResponse> reativar(@PathVariable Long id) {
         return contratoAssembler.toModel(contratoService.reativar(id));
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'ATENDENTE')")
     @PatchMapping("/{id}/cancelar")
     public EntityModel<ContratoResponse> cancelar(@PathVariable Long id) {
         return contratoAssembler.toModel(contratoService.cancelar(id));
@@ -114,21 +123,25 @@ public class ContratoController {
 
     // ---- Sub-recursos do contrato ----
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'ATENDENTE')")
     @GetMapping("/{id}/faturas")
     public CollectionModel<EntityModel<FaturaResponse>> listarFaturas(@PathVariable Long id) {
         return faturaAssembler.toCollectionModel(faturaService.listarPorContrato(id));
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'ATENDENTE')")
     @GetMapping("/{id}/chamados")
     public CollectionModel<EntityModel<ChamadoResponse>> listarChamados(@PathVariable Long id) {
         return chamadoAssembler.toCollectionModel(chamadoService.listarPorContrato(id));
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'ATENDENTE', 'TECNICO')")
     @GetMapping("/{id}/ordens-servico")
     public CollectionModel<EntityModel<OrdemServicoResponse>> listarOrdensServico(@PathVariable Long id) {
         return ordemServicoAssembler.toCollectionModel(ordemServicoService.listarPorContrato(id));
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'ATENDENTE', 'TECNICO')")
     @GetMapping("/{id}/equipamentos")
     public CollectionModel<EntityModel<EquipamentoResponse>> listarEquipamentos(@PathVariable Long id) {
         return equipamentoAssembler.toCollectionModel(equipamentoService.listarPorContrato(id));

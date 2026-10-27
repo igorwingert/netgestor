@@ -7,16 +7,12 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 /**
- * Dados de entrada do chamado. O protocolo é gerado pelo sistema e o status começa ABERTO.
- * PROVISÓRIO: abertoPorId vem no corpo até a etapa 5; depois disso o usuário
- * que abre o chamado passa a ser o dono do token JWT.
+ * Dados de entrada do chamado. O protocolo é gerado pelo sistema, o status começa ABERTO
+ * e quem abre o chamado é o usuário logado (dono do token JWT), não um campo do corpo.
  */
 public record ChamadoRequest(
         @NotNull(message = "O contrato é obrigatório")
         Long contratoId,
-
-        @NotNull(message = "O usuário que abriu o chamado é obrigatório")
-        Long abertoPorId,
 
         @NotNull(message = "O tipo é obrigatório (SEM_CONEXAO, LENTIDAO, FINANCEIRO ou OUTRO)")
         TipoChamado tipo,

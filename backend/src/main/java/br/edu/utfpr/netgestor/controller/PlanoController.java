@@ -11,6 +11,7 @@ import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -30,27 +31,32 @@ public class PlanoController {
     private final PlanoService planoService;
     private final PlanoAssembler planoAssembler;
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'ATENDENTE')")
     @GetMapping
     public CollectionModel<EntityModel<PlanoResponse>> listar() {
         return planoAssembler.toCollectionModel(planoService.listar());
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'ATENDENTE')")
     @GetMapping("/{id}")
     public EntityModel<PlanoResponse> buscarPorId(@PathVariable Long id) {
         return planoAssembler.toModel(planoService.buscarPorId(id));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<EntityModel<PlanoResponse>> cadastrar(@RequestBody @Valid PlanoRequest request) {
         EntityModel<PlanoResponse> model = planoAssembler.toModel(planoService.cadastrar(request));
         return ResponseEntity.created(model.getRequiredLink(IanaLinkRelations.SELF).toUri()).body(model);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     public EntityModel<PlanoResponse> atualizar(@PathVariable Long id, @RequestBody @Valid PlanoRequest request) {
         return planoAssembler.toModel(planoService.atualizar(id, request));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void excluir(@PathVariable Long id) {

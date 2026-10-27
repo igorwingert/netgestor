@@ -7,6 +7,9 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.DisabledException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -38,6 +41,27 @@ public class TratadorDeErros {
     @ExceptionHandler(RegraNegocioException.class)
     public ResponseEntity<ErroResponse> regraNegocio(RegraNegocioException ex, HttpServletRequest request) {
         return resposta(HttpStatus.CONFLICT, ex.getMessage(), request, List.of());
+    }
+
+    /** 401: login com e-mail/senha errados ou usuário desativado. */
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<ErroResponse> autenticacao(AuthenticationException ex, HttpServletRequest request) {
+        String mensagem = ex instanceof DisabledException
+                ? "Usuário desativado"
+                : "E-mail ou senha inválidos";
+        return resposta(HttpStatus.UNAUTHORIZED, mensagem, request, List.of());
+    }
+
+    /**
+     * 403: o @PreAuthorize (ou uma regra do service) negou o acesso.
+     * Sem este handler, a exceção cairia no handler genérico e viraria 500.
+     */
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ErroResponse> acessoNegado(AccessDeniedException ex, HttpServletRequest request) {
+        String mensagem = ex.getMessage() != null && !ex.getMessage().startsWith("Access Denied")
+                ? ex.getMessage()
+                : "Seu perfil não tem permissão para esta operação";
+        return resposta(HttpStatus.FORBIDDEN, mensagem, request, List.of());
     }
 
     /** 400: Bean Validation (@NotBlank, @Size...) falhou. Lista o erro de cada campo. */

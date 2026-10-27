@@ -53,11 +53,12 @@ public class ChamadoService {
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Chamado " + id + " não encontrado"));
     }
 
+    /** abertoPorId = id do usuário logado (vem do token, via controller). */
     @Transactional
-    public ChamadoResponse cadastrar(ChamadoRequest request) {
+    public ChamadoResponse cadastrar(ChamadoRequest request, Long abertoPorId) {
         Chamado chamado = new Chamado();
         chamado.setProtocolo(gerarProtocolo());
-        chamado.setAbertoPor(usuarioService.buscarEntidade(request.abertoPorId()));
+        chamado.setAbertoPor(usuarioService.buscarEntidade(abertoPorId));
         copiarDados(request, chamado);
         return ChamadoResponse.de(chamadoRepository.save(chamado));
     }

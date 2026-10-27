@@ -11,6 +11,7 @@ import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,6 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
  *   POST /api/faturas/{faturaId}/pagamentos   (link "registrar-pagamento" da fatura)
  * e cada pagamento tem a sua URI própria: GET/PUT/DELETE /api/pagamentos/{id}
  */
+@PreAuthorize("hasAnyRole('ADMIN', 'ATENDENTE')")
 @RestController
 @RequestMapping("/api")
 @RequiredArgsConstructor

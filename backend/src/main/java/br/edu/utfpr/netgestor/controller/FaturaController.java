@@ -12,6 +12,7 @@ import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -27,6 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.time.YearMonth;
 
 /** Recurso /api/faturas, com filtros ?status=VENCIDA&competencia=2026-10 e a ação cancelar. */
+@PreAuthorize("hasAnyRole('ADMIN', 'ATENDENTE')")
 @RestController
 @RequestMapping("/api/faturas")
 @RequiredArgsConstructor

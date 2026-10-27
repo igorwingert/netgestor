@@ -4,13 +4,16 @@ import br.edu.utfpr.netgestor.domain.Chamado;
 import br.edu.utfpr.netgestor.domain.Contrato;
 import br.edu.utfpr.netgestor.domain.Equipamento;
 import br.edu.utfpr.netgestor.domain.OrdemServico;
+import br.edu.utfpr.netgestor.domain.enums.Perfil;
 import br.edu.utfpr.netgestor.domain.enums.StatusOrdemServico;
 import br.edu.utfpr.netgestor.dto.OrdemServicoRequest;
 import br.edu.utfpr.netgestor.dto.OrdemServicoResponse;
 import br.edu.utfpr.netgestor.exception.RecursoNaoEncontradoException;
 import br.edu.utfpr.netgestor.exception.RegraNegocioException;
 import br.edu.utfpr.netgestor.repository.OrdemServicoRepository;
+import br.edu.utfpr.netgestor.security.UsuarioLogado;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -98,8 +101,9 @@ public class OrdemServicoService {
     // ---------------------------------------------------------------------
 
     @Transactional
-    public OrdemServicoResponse iniciar(Long id) {
+    public OrdemServicoResponse iniciar(Long id, UsuarioLogado usuario) {
         OrdemServico os = buscarEntidade(id);
+        validarTecnicoResponsavel(os, usuario);
         validarAcao(os.getStatus().podeIniciar(), "iniciar", os);
         os.setStatus(StatusOrdemServico.EM_EXECUCAO);
         return OrdemServicoResponse.de(os);
@@ -107,8 +111,9 @@ public class OrdemServicoService {
 
     /** Ao concluir, registra a data/hora de conclusão. */
     @Transactional
-    public OrdemServicoResponse concluir(Long id) {
+    public OrdemServicoResponse concluir(Long id, UsuarioLogado usuario) {
         OrdemServico os = buscarEntidade(id);
+        validarTecnicoResponsavel(os, usuario);
         validarAcao(os.getStatus().podeConcluir(), "concluir", os);
         os.setStatus(StatusOrdemServico.CONCLUIDA);
         os.setDataConclusao(LocalDateTime.now());
@@ -121,6 +126,20 @@ public class OrdemServicoService {
         validarAcao(os.getStatus().podeCancelar(), "cancelar", os);
         os.setStatus(StatusOrdemServico.CANCELADA);
         return OrdemServicoResponse.de(os);
+    }
+
+    /**
+     * Regra de acesso que depende do dado (por isso não cabe no @PreAuthorize):
+     * um usuário TECNICO só pode iniciar/concluir as ordens de serviço atribuídas a ele.
+     * O ADMIN pode agir em qualquer OS. Violação -> 403.
+     */
+    private void validarTecnicoResponsavel(OrdemServico os, UsuarioLogado usuario) {
+        boolean ehTecnico = usuario.getPerfil() == Perfil.TECNICO;
+        boolean ehResponsavel = os.getTecnico().getUsuario().getId().equals(usuario.getId());
+        if (ehTecnico && !ehResponsavel) {
+            throw new AccessDeniedException("A ordem de serviço " + os.getNumero()
+                    + " está atribuída a outro técnico (" + os.getTecnico().getNome() + ")");
+        }
     }
 
     private void validarAcao(boolean permitida, String acao, OrdemServico os) {

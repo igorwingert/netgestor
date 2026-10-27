@@ -12,6 +12,7 @@ import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -34,27 +35,32 @@ public class CtoController {
     private final CtoService ctoService;
     private final CtoAssembler ctoAssembler;
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'ATENDENTE', 'TECNICO')")
     @GetMapping
     public CollectionModel<EntityModel<CtoResponse>> listar() {
         return ctoAssembler.toCollectionModel(ctoService.listar());
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'ATENDENTE', 'TECNICO')")
     @GetMapping("/{id}")
     public EntityModel<CtoResponse> buscarPorId(@PathVariable Long id) {
         return ctoAssembler.toModel(ctoService.buscarPorId(id));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<EntityModel<CtoResponse>> cadastrar(@RequestBody @Valid CtoRequest request) {
         EntityModel<CtoResponse> model = ctoAssembler.toModel(ctoService.cadastrar(request));
         return ResponseEntity.created(model.getRequiredLink(IanaLinkRelations.SELF).toUri()).body(model);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     public EntityModel<CtoResponse> atualizar(@PathVariable Long id, @RequestBody @Valid CtoRequest request) {
         return ctoAssembler.toModel(ctoService.atualizar(id, request));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void excluir(@PathVariable Long id) {
@@ -62,6 +68,7 @@ public class CtoController {
     }
 
     /** Portas usadas e livres da CTO. Não é um recurso com CRUD, então os links ficam aqui mesmo. */
+    @PreAuthorize("hasAnyRole('ADMIN', 'ATENDENTE', 'TECNICO')")
     @GetMapping("/{id}/ocupacao")
     public EntityModel<OcupacaoCtoResponse> ocupacao(@PathVariable Long id) {
         return EntityModel.of(ctoService.ocupacao(id),

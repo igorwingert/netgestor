@@ -5,6 +5,7 @@ import br.edu.utfpr.netgestor.domain.enums.Prioridade;
 import br.edu.utfpr.netgestor.domain.enums.StatusChamado;
 import br.edu.utfpr.netgestor.dto.ChamadoRequest;
 import br.edu.utfpr.netgestor.dto.ChamadoResponse;
+import br.edu.utfpr.netgestor.security.UsuarioLogado;
 import br.edu.utfpr.netgestor.service.ChamadoService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +14,8 @@ import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -26,6 +29,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 /** Recurso /api/chamados, com filtros ?status=&prioridade= e as ações do ciclo de vida. */
+@PreAuthorize("hasAnyRole('ADMIN', 'ATENDENTE')")
 @RestController
 @RequestMapping("/api/chamados")
 @RequiredArgsConstructor
@@ -47,8 +51,10 @@ public class ChamadoController {
     }
 
     @PostMapping
-    public ResponseEntity<EntityModel<ChamadoResponse>> cadastrar(@RequestBody @Valid ChamadoRequest request) {
-        EntityModel<ChamadoResponse> model = chamadoAssembler.toModel(chamadoService.cadastrar(request));
+    /** Quem abre o chamado é o usuário dono do token (@AuthenticationPrincipal). */
+    public ResponseEntity<EntityModel<ChamadoResponse>> cadastrar(@RequestBody @Valid ChamadoRequest request,
+                                                                  @AuthenticationPrincipal UsuarioLogado usuario) {
+        EntityModel<ChamadoResponse> model = chamadoAssembler.toModel(chamadoService.cadastrar(request, usuario.getId()));
         return ResponseEntity.created(model.getRequiredLink(IanaLinkRelations.SELF).toUri()).body(model);
     }
 

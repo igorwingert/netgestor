@@ -15,6 +15,7 @@ import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -37,33 +38,39 @@ public class TecnicoController {
     private final OrdemServicoService ordemServicoService;
     private final OrdemServicoAssembler ordemServicoAssembler;
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'ATENDENTE', 'TECNICO')")
     @GetMapping
     public CollectionModel<EntityModel<TecnicoResponse>> listar() {
         return tecnicoAssembler.toCollectionModel(tecnicoService.listar());
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'ATENDENTE', 'TECNICO')")
     @GetMapping("/{id}")
     public EntityModel<TecnicoResponse> buscarPorId(@PathVariable Long id) {
         return tecnicoAssembler.toModel(tecnicoService.buscarPorId(id));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<EntityModel<TecnicoResponse>> cadastrar(@RequestBody @Valid TecnicoRequest request) {
         EntityModel<TecnicoResponse> model = tecnicoAssembler.toModel(tecnicoService.cadastrar(request));
         return ResponseEntity.created(model.getRequiredLink(IanaLinkRelations.SELF).toUri()).body(model);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     public EntityModel<TecnicoResponse> atualizar(@PathVariable Long id, @RequestBody @Valid TecnicoRequest request) {
         return tecnicoAssembler.toModel(tecnicoService.atualizar(id, request));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void excluir(@PathVariable Long id) {
         tecnicoService.excluir(id);
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'ATENDENTE', 'TECNICO')")
     @GetMapping("/{id}/ordens-servico")
     public CollectionModel<EntityModel<OrdemServicoResponse>> listarOrdensServico(
             @PathVariable Long id,

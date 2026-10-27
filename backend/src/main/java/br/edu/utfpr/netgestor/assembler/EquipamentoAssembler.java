@@ -2,7 +2,9 @@ package br.edu.utfpr.netgestor.assembler;
 
 import br.edu.utfpr.netgestor.controller.ContratoController;
 import br.edu.utfpr.netgestor.controller.EquipamentoController;
+import br.edu.utfpr.netgestor.domain.enums.Perfil;
 import br.edu.utfpr.netgestor.dto.EquipamentoResponse;
+import br.edu.utfpr.netgestor.security.Permissoes;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
@@ -28,10 +30,11 @@ public class EquipamentoAssembler
         }
 
         // Comodato: em ESTOQUE pode ser vinculado; INSTALADO pode ser desvinculado
-        if (equipamento.status().podeVincular()) {
+        boolean podeOperar = Permissoes.usuarioTemPerfil(Perfil.ADMIN, Perfil.TECNICO);
+        if (podeOperar && equipamento.status().podeVincular()) {
             model.add(linkTo(methodOn(EquipamentoController.class).vincular(id, null)).withRel("vincular"));
         }
-        if (equipamento.status().podeDesvincular()) {
+        if (podeOperar && equipamento.status().podeDesvincular()) {
             model.add(linkTo(methodOn(EquipamentoController.class).desvincular(id)).withRel("desvincular"));
         }
         return model;

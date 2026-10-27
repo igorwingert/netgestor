@@ -4,7 +4,9 @@ import br.edu.utfpr.netgestor.controller.ChamadoController;
 import br.edu.utfpr.netgestor.controller.ContratoController;
 import br.edu.utfpr.netgestor.controller.OrdemServicoController;
 import br.edu.utfpr.netgestor.controller.TecnicoController;
+import br.edu.utfpr.netgestor.domain.enums.Perfil;
 import br.edu.utfpr.netgestor.dto.OrdemServicoResponse;
+import br.edu.utfpr.netgestor.security.Permissoes;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
@@ -30,14 +32,18 @@ public class OrdemServicoAssembler
             model.add(linkTo(methodOn(ChamadoController.class).buscarPorId(os.chamadoId())).withRel("chamado"));
         }
 
-        // AGENDADA -> iniciar -> EM_EXECUCAO -> concluir; cancelar enquanto não concluída
-        if (os.status().podeIniciar()) {
-            model.add(linkTo(methodOn(OrdemServicoController.class).iniciar(id)).withRel("iniciar"));
+        // AGENDADA -> iniciar -> EM_EXECUCAO -> concluir; cancelar enquanto não concluída.
+        // Cada link exige o status certo E um perfil que possa executar a ação.
+        // (methodOn recebe null no usuário: o parâmetro só existe na execução, não na URL)
+        boolean podeExecutar = Permissoes.usuarioTemPerfil(Perfil.ADMIN, Perfil.TECNICO);
+        boolean podeGerenciar = Permissoes.usuarioTemPerfil(Perfil.ADMIN, Perfil.ATENDENTE);
+        if (podeExecutar && os.status().podeIniciar()) {
+            model.add(linkTo(methodOn(OrdemServicoController.class).iniciar(id, null)).withRel("iniciar"));
         }
-        if (os.status().podeConcluir()) {
-            model.add(linkTo(methodOn(OrdemServicoController.class).concluir(id)).withRel("concluir"));
+        if (podeExecutar && os.status().podeConcluir()) {
+            model.add(linkTo(methodOn(OrdemServicoController.class).concluir(id, null)).withRel("concluir"));
         }
-        if (os.status().podeCancelar()) {
+        if (podeGerenciar && os.status().podeCancelar()) {
             model.add(linkTo(methodOn(OrdemServicoController.class).cancelar(id)).withRel("cancelar"));
         }
         return model;

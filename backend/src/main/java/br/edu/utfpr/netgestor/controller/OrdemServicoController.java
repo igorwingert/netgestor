@@ -4,6 +4,7 @@ import br.edu.utfpr.netgestor.assembler.OrdemServicoAssembler;
 import br.edu.utfpr.netgestor.domain.enums.StatusOrdemServico;
 import br.edu.utfpr.netgestor.dto.OrdemServicoRequest;
 import br.edu.utfpr.netgestor.dto.OrdemServicoResponse;
+import br.edu.utfpr.netgestor.security.UsuarioLogado;
 import br.edu.utfpr.netgestor.service.OrdemServicoService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +13,8 @@ import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -33,6 +36,7 @@ public class OrdemServicoController {
     private final OrdemServicoService ordemServicoService;
     private final OrdemServicoAssembler ordemServicoAssembler;
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'ATENDENTE', 'TECNICO')")
     @GetMapping
     public CollectionModel<EntityModel<OrdemServicoResponse>> listar(
             @RequestParam(required = false) StatusOrdemServico status,
@@ -40,39 +44,49 @@ public class OrdemServicoController {
         return ordemServicoAssembler.toCollectionModel(ordemServicoService.listar(status, tecnicoId, null));
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'ATENDENTE', 'TECNICO')")
     @GetMapping("/{id}")
     public EntityModel<OrdemServicoResponse> buscarPorId(@PathVariable Long id) {
         return ordemServicoAssembler.toModel(ordemServicoService.buscarPorId(id));
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'ATENDENTE')")
     @PostMapping
     public ResponseEntity<EntityModel<OrdemServicoResponse>> cadastrar(@RequestBody @Valid OrdemServicoRequest request) {
         EntityModel<OrdemServicoResponse> model = ordemServicoAssembler.toModel(ordemServicoService.cadastrar(request));
         return ResponseEntity.created(model.getRequiredLink(IanaLinkRelations.SELF).toUri()).body(model);
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'ATENDENTE')")
     @PutMapping("/{id}")
     public EntityModel<OrdemServicoResponse> atualizar(@PathVariable Long id,
                                                        @RequestBody @Valid OrdemServicoRequest request) {
         return ordemServicoAssembler.toModel(ordemServicoService.atualizar(id, request));
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'ATENDENTE')")
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void excluir(@PathVariable Long id) {
         ordemServicoService.excluir(id);
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'TECNICO')")
     @PatchMapping("/{id}/iniciar")
-    public EntityModel<OrdemServicoResponse> iniciar(@PathVariable Long id) {
-        return ordemServicoAssembler.toModel(ordemServicoService.iniciar(id));
+    public EntityModel<OrdemServicoResponse> iniciar(@PathVariable Long id,
+                                                     @AuthenticationPrincipal UsuarioLogado usuario) {
+        return ordemServicoAssembler.toModel(ordemServicoService.iniciar(id, usuario));
     }
 
+    /** Além do perfil, o service confere se a OS é do técnico logado (senão, 403). */
+    @PreAuthorize("hasAnyRole('ADMIN', 'TECNICO')")
     @PatchMapping("/{id}/concluir")
-    public EntityModel<OrdemServicoResponse> concluir(@PathVariable Long id) {
-        return ordemServicoAssembler.toModel(ordemServicoService.concluir(id));
+    public EntityModel<OrdemServicoResponse> concluir(@PathVariable Long id,
+                                                      @AuthenticationPrincipal UsuarioLogado usuario) {
+        return ordemServicoAssembler.toModel(ordemServicoService.concluir(id, usuario));
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'ATENDENTE')")
     @PatchMapping("/{id}/cancelar")
     public EntityModel<OrdemServicoResponse> cancelar(@PathVariable Long id) {
         return ordemServicoAssembler.toModel(ordemServicoService.cancelar(id));
