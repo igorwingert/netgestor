@@ -36,7 +36,8 @@ class ConsultasJpaTest {
     void clientesPorParteDoNomeOuDocumento() {
         assertThat(clienteRepository.buscar("silva", "")).hasSize(1);
         assertThat(clienteRepository.buscar("", "11222333")).hasSize(1);
-        assertThat(clienteRepository.buscar("", "")).hasSize(6);
+        assertThat(clienteRepository.buscar("", "")).hasSize(7); // 6 da V2 + 1 da V3
+        assertThat(clienteRepository.buscar("", "ABC345")).hasSize(1); // CNPJ alfanumérico (V3)
     }
 
     @Test

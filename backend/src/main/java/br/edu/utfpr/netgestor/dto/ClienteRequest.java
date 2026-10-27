@@ -32,10 +32,13 @@ public record ClienteRequest(
         /* opcional: se não for enviado, o cliente fica ativo */
         Boolean ativo) {
 
-    /** Aceita CPF/CNPJ com ou sem máscara: guarda somente os dígitos. */
+    /**
+     * Aceita CPF/CNPJ com ou sem máscara: guarda só letras maiúsculas e números
+     * (o CNPJ pode ser alfanumérico desde a V3; o CPF continua só com dígitos).
+     */
     public ClienteRequest {
         if (cpfCnpj != null) {
-            cpfCnpj = cpfCnpj.replaceAll("\\D", "");
+            cpfCnpj = cpfCnpj.toUpperCase().replaceAll("[^0-9A-Z]", "");
         }
         if (email != null) {
             email = email.trim().toLowerCase();

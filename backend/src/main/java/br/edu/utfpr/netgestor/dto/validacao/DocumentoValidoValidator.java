@@ -41,8 +41,12 @@ public class DocumentoValidoValidator implements ConstraintValidator<DocumentoVa
                 && digitoCpf(cpf, 10) == cpf.charAt(10) - '0';
     }
 
+    /**
+     * CNPJ numérico ou alfanumérico (formato da Receita desde jul/2026, migration V3):
+     * 12 caracteres de 0-9/A-Z seguidos de 2 dígitos verificadores numéricos.
+     */
     static boolean cnpjValido(String cnpj) {
-        if (!cnpj.matches("\\d{14}") || cnpj.chars().distinct().count() == 1) {
+        if (!cnpj.matches("[0-9A-Z]{12}\\d{2}") || cnpj.chars().distinct().count() == 1) {
             return false;
         }
         return digitoCnpj(cnpj, 12) == cnpj.charAt(12) - '0'
@@ -59,7 +63,12 @@ public class DocumentoValidoValidator implements ConstraintValidator<DocumentoVa
         return resto < 2 ? 0 : 11 - resto;
     }
 
-    /** CNPJ: pesos de 2 a 9, repetindo, aplicados da direita para a esquerda. */
+    /**
+     * CNPJ: pesos de 2 a 9, repetindo, aplicados da direita para a esquerda.
+     * Cada caractere vale (código ASCII - 48): os dígitos continuam valendo 0 a 9
+     * e as letras passam a valer A = 17, B = 18 ... Z = 42 (regra da Receita Federal).
+     * Como '0' tem código 48, "caractere - '0'" é exatamente essa conta.
+     */
     private static int digitoCnpj(String cnpj, int quantidade) {
         int soma = 0;
         int peso = 2;

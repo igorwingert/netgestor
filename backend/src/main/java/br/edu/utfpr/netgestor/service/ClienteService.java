@@ -35,7 +35,7 @@ public class ClienteService {
     public List<ClienteResponse> listar(String nome, String cpfCnpj) {
         // Filtro não informado vira "": na consulta, LIKE '%%' aceita qualquer valor
         String filtroNome = nome == null ? "" : nome.trim();
-        String filtroDocumento = cpfCnpj == null ? "" : cpfCnpj.replaceAll("\\D", "");
+        String filtroDocumento = cpfCnpj == null ? "" : cpfCnpj.toUpperCase().replaceAll("[^0-9A-Z]", "");
         return clienteRepository.buscar(filtroNome, filtroDocumento).stream()
                 .map(ClienteResponse::de)
                 .toList();
