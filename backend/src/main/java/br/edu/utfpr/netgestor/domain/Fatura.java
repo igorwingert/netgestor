@@ -50,4 +50,29 @@ public class Fatura {
     /* Lado inverso do 1:N com Pagamento (a FK fatura_id está na tabela pagamento). */
     @OneToMany(mappedBy = "fatura")
     private List<Pagamento> pagamentos = new ArrayList<>();
+
+    /** Soma de todos os pagamentos registrados (aceita pagamentos parciais). */
+    public BigDecimal totalPago() {
+        return pagamentos.stream()
+                .map(Pagamento::getValorPago)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+    /**
+     * Regra de negócio: a fatura fica PAGA quando a soma dos pagamentos alcança o valor.
+     * Enquanto falta pagar, fica VENCIDA (se já passou do vencimento) ou ABERTA.
+     * Fatura CANCELADA não muda de status.
+     */
+    public void atualizarStatus(LocalDate hoje) {
+        if (status == StatusFatura.CANCELADA) {
+            return;
+        }
+        if (totalPago().compareTo(valor) >= 0) {
+            status = StatusFatura.PAGA;
+        } else if (dataVencimento.isBefore(hoje)) {
+            status = StatusFatura.VENCIDA;
+        } else {
+            status = StatusFatura.ABERTA;
+        }
+    }
 }

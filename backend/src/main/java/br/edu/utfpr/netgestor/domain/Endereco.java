@@ -43,4 +43,9 @@ public class Endereco {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "cliente_id")
     private Cliente cliente;
+
+    /** Endereço em uma linha, ex.: "Rua XV de Novembro, 1000 - Centro, Curitiba/PR". */
+    public String resumo() {
+        return logradouro + ", " + numero + " - " + bairro + ", " + cidade + "/" + uf;
+    }
 }
