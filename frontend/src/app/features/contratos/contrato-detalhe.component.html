@@ -1,0 +1,109 @@
+@if (contrato(); as contrato) {
+  <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+    <h1 class="h3 mb-0">
+      <i class="bi bi-file-earmark-text"></i> Contrato {{ contrato.numero }}
+      <app-status-badge [status]="contrato.status" />
+    </h1>
+    <a class="btn btn-outline-secondary" routerLink="/contratos"><i class="bi bi-arrow-left"></i> Voltar</a>
+  </div>
+
+  <div class="card mb-3">
+    <div class="card-body">
+      <dl class="row mb-0">
+        <dt class="col-sm-3">Cliente</dt><dd class="col-sm-9">{{ contrato.clienteNome }}</dd>
+        <dt class="col-sm-3">Plano</dt><dd class="col-sm-9">{{ contrato.planoNome }}</dd>
+        <dt class="col-sm-3">Endereço de instalação</dt><dd class="col-sm-9">{{ contrato.enderecoInstalacao }}</dd>
+        <dt class="col-sm-3">CTO / porta</dt>
+        <dd class="col-sm-9">{{ contrato.ctoIdentificacao ? contrato.ctoIdentificacao + ' / porta ' + contrato.portaCto : 'Rádio (sem CTO)' }}</dd>
+        <dt class="col-sm-3">Início</dt><dd class="col-sm-9">{{ contrato.dataInicio | date: 'dd/MM/yyyy' }}</dd>
+        <dt class="col-sm-3">Vencimento</dt><dd class="col-sm-9">Todo dia {{ contrato.diaVencimento }}</dd>
+      </dl>
+    </div>
+
+    <!-- Botões gerados a partir dos links HATEOAS -->
+    @if (acoes().length > 0 || podeGerenciar()) {
+      <div class="card-footer d-flex flex-wrap gap-2">
+        @for (acao of acoes(); track acao.rel) {
+          <button type="button" class="btn btn-sm" [class]="'btn btn-sm ' + acao.classe" [disabled]="executando()" (click)="executar(acao)">
+            <i [class]="'bi ' + acao.icone"></i> {{ acao.rotulo }}
+          </button>
+        }
+        @if (podeGerenciar()) {
+          @if (contrato.status !== 'CANCELADO') {
+            <a class="btn btn-sm btn-outline-primary ms-auto" [routerLink]="['/contratos', contrato.id, 'editar']">
+              <i class="bi bi-pencil"></i> Editar
+            </a>
+          }
+          <button type="button" class="btn btn-sm btn-outline-danger" [class.ms-auto]="contrato.status === 'CANCELADO'" (click)="excluir()">
+            <i class="bi bi-trash"></i> Excluir
+          </button>
+        }
+      </div>
+    }
+  </div>
+
+  <div class="row g-3">
+    @if (faturas(); as faturas) {
+      <div class="col-lg-6">
+        <div class="card h-100">
+          <div class="card-header"><i class="bi bi-receipt"></i> Faturas</div>
+          <ul class="list-group list-group-flush">
+            @for (fatura of faturas; track fatura.id) {
+              <li class="list-group-item d-flex justify-content-between align-items-center">
+                <span>{{ fatura.competencia | date: 'MM/yyyy' }} · vence {{ fatura.dataVencimento | date: 'dd/MM' }}</span>
+                <span>{{ fatura.valor | currency }} <app-status-badge [status]="fatura.status" /></span>
+              </li>
+            } @empty { <li class="list-group-item text-body-secondary">Nenhuma fatura</li> }
+          </ul>
+        </div>
+      </div>
+    }
+    @if (chamados(); as chamados) {
+      <div class="col-lg-6">
+        <div class="card h-100">
+          <div class="card-header"><i class="bi bi-headset"></i> Chamados</div>
+          <ul class="list-group list-group-flush">
+            @for (chamado of chamados; track chamado.id) {
+              <li class="list-group-item d-flex justify-content-between align-items-center">
+                <span>{{ chamado.protocolo }} · {{ chamado.tipo }}</span>
+                <app-status-badge [status]="chamado.status" />
+              </li>
+            } @empty { <li class="list-group-item text-body-secondary">Nenhum chamado</li> }
+          </ul>
+        </div>
+      </div>
+    }
+    @if (ordens(); as ordens) {
+      <div class="col-lg-6">
+        <div class="card h-100">
+          <div class="card-header"><i class="bi bi-tools"></i> Ordens de serviço</div>
+          <ul class="list-group list-group-flush">
+            @for (os of ordens; track os.id) {
+              <li class="list-group-item d-flex justify-content-between align-items-center">
+                <span>{{ os.numero }} · {{ os.tipo }} · {{ os.dataAgendada | date: 'dd/MM/yyyy HH:mm' }}</span>
+                <app-status-badge [status]="os.status" />
+              </li>
+            } @empty { <li class="list-group-item text-body-secondary">Nenhuma ordem de serviço</li> }
+          </ul>
+        </div>
+      </div>
+    }
+    @if (equipamentos(); as equipamentos) {
+      <div class="col-lg-6">
+        <div class="card h-100">
+          <div class="card-header"><i class="bi bi-hdd-network"></i> Equipamentos em comodato</div>
+          <ul class="list-group list-group-flush">
+            @for (equipamento of equipamentos; track equipamento.id) {
+              <li class="list-group-item">
+                {{ equipamento.tipo }} {{ equipamento.fabricante }} {{ equipamento.modelo }}
+                <small class="text-body-secondary">· S/N {{ equipamento.numeroSerie }} · MAC {{ equipamento.mac }}</small>
+              </li>
+            } @empty { <li class="list-group-item text-body-secondary">Nenhum equipamento</li> }
+          </ul>
+        </div>
+      </div>
+    }
+  </div>
+} @else {
+  <p class="text-body-secondary">Carregando...</p>
+}

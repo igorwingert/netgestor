@@ -1,0 +1,85 @@
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h1 class="h3 mb-0"><i class="bi bi-file-earmark-text"></i> {{ contratoId() ? 'Editar contrato' : 'Novo contrato' }}</h1>
+  <a class="btn btn-outline-secondary" [routerLink]="contratoId() ? ['/contratos', contratoId()] : ['/contratos']">
+    <i class="bi bi-arrow-left"></i> Voltar
+  </a>
+</div>
+
+<form class="card card-body" [formGroup]="form" (ngSubmit)="salvar()" novalidate>
+  <div class="row g-3">
+    <div class="col-md-6">
+      <label class="form-label" for="clienteId">Cliente</label>
+      <select id="clienteId" class="form-select" formControlName="clienteId" [class.is-invalid]="erro('clienteId')">
+        <option [ngValue]="null">Selecione...</option>
+        @for (cliente of clientes(); track cliente.id) {
+          <option [ngValue]="cliente.id">{{ cliente.nome }}</option>
+        }
+      </select>
+      @if (erro('clienteId'); as msg) { <div class="invalid-feedback">{{ msg }}</div> }
+    </div>
+    <div class="col-md-6">
+      <label class="form-label" for="enderecoInstalacaoId">Endereço de instalação</label>
+      <select id="enderecoInstalacaoId" class="form-select" formControlName="enderecoInstalacaoId"
+              [class.is-invalid]="erro('enderecoInstalacaoId')">
+        <option [ngValue]="null">{{ enderecos().length ? 'Selecione...' : 'Escolha um cliente com endereço cadastrado' }}</option>
+        @for (endereco of enderecos(); track endereco.id) {
+          <option [ngValue]="endereco.id">{{ endereco.logradouro }}, {{ endereco.numero }} - {{ endereco.bairro }}</option>
+        }
+      </select>
+      @if (erro('enderecoInstalacaoId'); as msg) { <div class="invalid-feedback">{{ msg }}</div> }
+    </div>
+
+    <div class="col-md-6">
+      <label class="form-label" for="planoId">Plano</label>
+      <select id="planoId" class="form-select" formControlName="planoId" [class.is-invalid]="erro('planoId')">
+        <option [ngValue]="null">Selecione...</option>
+        @for (plano of planosDisponiveis(); track plano.id) {
+          <option [ngValue]="plano.id">{{ plano.nome }} ({{ plano.tecnologia === 'FIBRA' ? 'fibra' : 'rádio' }})</option>
+        }
+      </select>
+      @if (erro('planoId'); as msg) { <div class="invalid-feedback">{{ msg }}</div> }
+    </div>
+
+    @if (ehFibra()) {
+      <div class="col-md-3">
+        <label class="form-label" for="ctoId">CTO</label>
+        <select id="ctoId" class="form-select" formControlName="ctoId">
+          <option [ngValue]="null">Selecione...</option>
+          @for (cto of ctos(); track cto.id) {
+            <option [ngValue]="cto.id">{{ cto.identificacao }}</option>
+          }
+        </select>
+      </div>
+      <div class="col-md-3">
+        <label class="form-label" for="portaCto">Porta livre</label>
+        <select id="portaCto" class="form-select" formControlName="portaCto">
+          <option [ngValue]="null">{{ portasLivres().length ? 'Selecione...' : 'Escolha a CTO' }}</option>
+          @for (porta of portasLivres(); track porta) {
+            <option [ngValue]="porta">Porta {{ porta }}</option>
+          }
+        </select>
+      </div>
+    } @else {
+      <div class="col-md-6 d-flex align-items-end">
+        <div class="alert alert-info py-2 mb-0 w-100"><i class="bi bi-broadcast"></i> Plano via rádio: não usa CTO.</div>
+      </div>
+    }
+
+    <div class="col-md-3">
+      <label class="form-label" for="dataInicio">Data de início</label>
+      <input id="dataInicio" type="date" class="form-control" formControlName="dataInicio" [class.is-invalid]="erro('dataInicio')" />
+      @if (erro('dataInicio'); as msg) { <div class="invalid-feedback">{{ msg }}</div> }
+    </div>
+    <div class="col-md-3">
+      <label class="form-label" for="diaVencimento">Dia de vencimento</label>
+      <input id="diaVencimento" type="number" min="1" max="28" class="form-control" formControlName="diaVencimento"
+             [class.is-invalid]="erro('diaVencimento')" />
+      @if (erro('diaVencimento'); as msg) { <div class="invalid-feedback">{{ msg }}</div> }
+    </div>
+  </div>
+  <div class="mt-3">
+    <button type="submit" class="btn btn-primary" [disabled]="salvando()">
+      <i class="bi bi-check-lg"></i> {{ salvando() ? 'Salvando...' : 'Salvar' }}
+    </button>
+  </div>
+</form>

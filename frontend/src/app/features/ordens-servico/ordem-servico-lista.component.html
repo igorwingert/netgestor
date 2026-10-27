@@ -1,0 +1,76 @@
+<h1 class="h3 mb-3">
+  <i class="bi bi-tools"></i> {{ ehTecnico() ? 'Minhas ordens de serviço' : 'Ordens de serviço' }}
+</h1>
+
+<form class="card card-body mb-3" [formGroup]="filtros">
+  <div class="row g-2">
+    <div class="col-md-4">
+      <label class="form-label" for="filtro-status">Status</label>
+      <select id="filtro-status" class="form-select" formControlName="status" (change)="carregar()">
+        <option value="">Todos</option>
+        <option value="AGENDADA">Agendada</option>
+        <option value="EM_EXECUCAO">Em execução</option>
+        <option value="CONCLUIDA">Concluída</option>
+        <option value="CANCELADA">Cancelada</option>
+      </select>
+    </div>
+    @if (!ehTecnico()) {
+      <div class="col-md-4">
+        <label class="form-label" for="filtro-tecnico">Técnico</label>
+        <select id="filtro-tecnico" class="form-select" formControlName="tecnicoId" (change)="carregar()">
+          <option [ngValue]="null">Todos</option>
+          @for (tecnico of tecnicos(); track tecnico.id) {
+            <option [ngValue]="tecnico.id">{{ tecnico.nome }}</option>
+          }
+        </select>
+      </div>
+    }
+  </div>
+</form>
+
+<div class="row g-3">
+  @for (os of ordens(); track os.id) {
+    <div class="col-md-6 col-xl-4">
+      <div class="card h-100 shadow-sm">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <strong>{{ os.numero }}</strong>
+          <app-status-badge [status]="os.status" />
+        </div>
+        <div class="card-body">
+          <p class="mb-1"><i class="bi bi-wrench"></i> {{ os.tipo.replaceAll('_', ' ') }} · contrato {{ os.contratoNumero }}</p>
+          <p class="mb-1"><i class="bi bi-geo-alt"></i> {{ os.enderecoInstalacao }}</p>
+          <p class="mb-1"><i class="bi bi-calendar-event"></i> {{ os.dataAgendada | date: 'dd/MM/yyyy HH:mm' }}</p>
+          <p class="mb-1"><i class="bi bi-person-gear"></i> {{ os.tecnicoNome }}</p>
+          @if (os.chamadoProtocolo) {
+            <p class="mb-1"><i class="bi bi-headset"></i> Chamado {{ os.chamadoProtocolo }}</p>
+          }
+          @if (os.observacoes) {
+            <p class="mb-1 text-body-secondary"><i class="bi bi-chat-left-text"></i> {{ os.observacoes }}</p>
+          }
+          @if (os.equipamentos.length > 0) {
+            <p class="mb-0 small">
+              <i class="bi bi-hdd-network"></i>
+              @for (equipamento of os.equipamentos; track equipamento.id; let ultimo = $last) {
+                {{ equipamento.tipo }} {{ equipamento.modelo }} ({{ equipamento.numeroSerie }}){{ ultimo ? '' : ', ' }}
+              }
+            </p>
+          }
+          @if (os.dataConclusao) {
+            <p class="mb-0 mt-1 text-success small"><i class="bi bi-check2-all"></i> Concluída em {{ os.dataConclusao | date: 'dd/MM/yyyy HH:mm' }}</p>
+          }
+        </div>
+        @if (acoes(os).length > 0) {
+          <div class="card-footer d-flex gap-2">
+            @for (acao of acoes(os); track acao.rel) {
+              <button type="button" class="btn btn-sm" [class]="'btn btn-sm ' + acao.classe" (click)="executar(os, acao)">
+                <i [class]="'bi ' + acao.icone"></i> {{ acao.rotulo }}
+              </button>
+            }
+          </div>
+        }
+      </div>
+    </div>
+  } @empty {
+    <p class="text-body-secondary">{{ carregando() ? 'Carregando...' : 'Nenhuma ordem de serviço encontrada' }}</p>
+  }
+</div>

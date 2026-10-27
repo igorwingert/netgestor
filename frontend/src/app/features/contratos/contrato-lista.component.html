@@ -1,0 +1,54 @@
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h1 class="h3 mb-0"><i class="bi bi-file-earmark-text"></i> Contratos</h1>
+  @if (podeGerenciar()) {
+    <a class="btn btn-primary" routerLink="novo"><i class="bi bi-plus-lg"></i> Novo contrato</a>
+  }
+</div>
+
+<form class="card card-body mb-3" [formGroup]="filtros">
+  <div class="row g-2 align-items-end">
+    <div class="col-md-4">
+      <label class="form-label" for="filtro-status">Status</label>
+      <select id="filtro-status" class="form-select" formControlName="status" (change)="carregar()">
+        <option value="">Todos</option>
+        <option value="ATIVO">Ativo</option>
+        <option value="SUSPENSO">Suspenso</option>
+        <option value="CANCELADO">Cancelado</option>
+      </select>
+    </div>
+  </div>
+</form>
+
+<div class="card">
+  <div class="table-responsive">
+    <table class="table table-hover align-middle mb-0">
+      <thead class="table-light">
+        <tr><th>Número</th><th>Cliente</th><th>Plano</th><th>CTO / porta</th><th>Status</th><th class="text-end">Ações</th></tr>
+      </thead>
+      <tbody>
+        @for (contrato of contratos(); track contrato.id) {
+          <tr>
+            <td class="fw-semibold text-nowrap">{{ contrato.numero }}</td>
+            <td>{{ contrato.clienteNome }}</td>
+            <td>{{ contrato.planoNome }}</td>
+            <td class="text-nowrap">
+              {{ contrato.ctoIdentificacao ? contrato.ctoIdentificacao + ' / ' + contrato.portaCto : 'Rádio (sem CTO)' }}
+            </td>
+            <td><app-status-badge [status]="contrato.status" /></td>
+            <td class="text-end text-nowrap">
+              <a class="btn btn-sm btn-outline-primary" [routerLink]="[contrato.id]">
+                <i class="bi bi-eye"></i> Detalhes
+              </a>
+            </td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="6" class="text-center text-body-secondary py-4">
+              {{ carregando() ? 'Carregando...' : 'Nenhum contrato encontrado' }}
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>

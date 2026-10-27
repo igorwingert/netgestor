@@ -1,0 +1,8 @@
+/* Estilos globais. O visual vem do Bootstrap 5 (configurado no angular.json). */
+.toast-container {
+  z-index: 1100;
+}
+
+.card a.card {
+  color: inherit;
+}

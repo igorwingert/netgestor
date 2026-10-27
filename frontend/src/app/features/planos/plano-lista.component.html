@@ -1,0 +1,46 @@
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h1 class="h3 mb-0"><i class="bi bi-speedometer2"></i> Planos</h1>
+  @if (podeEditar()) {
+    <a class="btn btn-primary" routerLink="novo"><i class="bi bi-plus-lg"></i> Novo plano</a>
+  }
+</div>
+
+<div class="card">
+  <div class="table-responsive">
+    <table class="table table-hover align-middle mb-0">
+      <thead class="table-light">
+        <tr>
+          <th>Nome</th><th>Tecnologia</th><th class="text-end">Download</th><th class="text-end">Upload</th>
+          <th class="text-end">Mensalidade</th><th>Situação</th>
+          @if (podeEditar()) { <th class="text-end">Ações</th> }
+        </tr>
+      </thead>
+      <tbody>
+        @for (plano of planos(); track plano.id) {
+          <tr>
+            <td>{{ plano.nome }}</td>
+            <td><span class="badge text-bg-light border">{{ plano.tecnologia === 'FIBRA' ? 'Fibra' : 'Rádio' }}</span></td>
+            <td class="text-end">{{ plano.downloadMbps }} Mbps</td>
+            <td class="text-end">{{ plano.uploadMbps }} Mbps</td>
+            <td class="text-end">{{ plano.valorMensal | currency }}</td>
+            <td>
+              <span class="badge" [class]="plano.ativo ? 'badge text-bg-success' : 'badge text-bg-secondary'">
+                {{ plano.ativo ? 'À venda' : 'Fora de venda' }}
+              </span>
+            </td>
+            @if (podeEditar()) {
+              <td class="text-end text-nowrap">
+                <a class="btn btn-sm btn-outline-primary me-1" [routerLink]="[plano.id]" title="Editar"><i class="bi bi-pencil"></i></a>
+                <button type="button" class="btn btn-sm btn-outline-danger" (click)="excluir(plano)" title="Excluir">
+                  <i class="bi bi-trash"></i>
+                </button>
+              </td>
+            }
+          </tr>
+        } @empty {
+          <tr><td colspan="7" class="text-center text-body-secondary py-4">Nenhum plano cadastrado</td></tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>

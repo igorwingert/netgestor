@@ -1,0 +1,41 @@
+<div class="min-vh-100 d-flex align-items-center justify-content-center bg-body-tertiary px-3">
+  <div class="card shadow-sm" style="max-width: 420px; width: 100%">
+    <div class="card-body p-4">
+      <h1 class="h3 text-center mb-1"><i class="bi bi-router text-primary"></i> NetGestor</h1>
+      <p class="text-center text-body-secondary mb-4">Gestão de provedor de internet</p>
+
+      @if (erroLogin(); as mensagem) {
+        <div class="alert alert-danger py-2"><i class="bi bi-exclamation-triangle"></i> {{ mensagem }}</div>
+      }
+
+      <form [formGroup]="form" (ngSubmit)="entrar()" novalidate>
+        <div class="mb-3">
+          <label class="form-label" for="email">E-mail</label>
+          <input id="email" type="email" class="form-control" formControlName="email" autocomplete="username"
+                 [class.is-invalid]="erro('email')" />
+          @if (erro('email'); as msg) { <div class="invalid-feedback">{{ msg }}</div> }
+        </div>
+        <div class="mb-3">
+          <label class="form-label" for="senha">Senha</label>
+          <input id="senha" type="password" class="form-control" formControlName="senha" autocomplete="current-password"
+                 [class.is-invalid]="erro('senha')" />
+          @if (erro('senha'); as msg) { <div class="invalid-feedback">{{ msg }}</div> }
+        </div>
+        <button type="submit" class="btn btn-primary w-100" [disabled]="entrando()">
+          @if (entrando()) { <span class="spinner-border spinner-border-sm"></span> Entrando... }
+          @else { <i class="bi bi-box-arrow-in-right"></i> Entrar }
+        </button>
+      </form>
+
+      <hr />
+      <p class="small text-body-secondary mb-2">Usuários de teste (clique para preencher):</p>
+      <div class="d-flex flex-wrap gap-2">
+        @for (usuario of usuariosDeTeste; track usuario.email) {
+          <button type="button" class="btn btn-outline-secondary btn-sm" (click)="preencher(usuario.email, usuario.senha)">
+            {{ usuario.perfil }}
+          </button>
+        }
+      </div>
+    </div>
+  </div>
+</div>

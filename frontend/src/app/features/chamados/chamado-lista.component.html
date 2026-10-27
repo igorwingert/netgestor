@@ -1,0 +1,71 @@
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h1 class="h3 mb-0"><i class="bi bi-headset"></i> Chamados</h1>
+  <a class="btn btn-primary" routerLink="novo"><i class="bi bi-plus-lg"></i> Abrir chamado</a>
+</div>
+
+<form class="card card-body mb-3" [formGroup]="filtros">
+  <div class="row g-2">
+    <div class="col-md-4">
+      <label class="form-label" for="filtro-status">Status</label>
+      <select id="filtro-status" class="form-select" formControlName="status" (change)="carregar()">
+        <option value="">Todos</option>
+        <option value="ABERTO">Aberto</option>
+        <option value="EM_ATENDIMENTO">Em atendimento</option>
+        <option value="RESOLVIDO">Resolvido</option>
+        <option value="FECHADO">Fechado</option>
+      </select>
+    </div>
+    <div class="col-md-4">
+      <label class="form-label" for="filtro-prioridade">Prioridade</label>
+      <select id="filtro-prioridade" class="form-select" formControlName="prioridade" (change)="carregar()">
+        <option value="">Todas</option>
+        <option value="BAIXA">Baixa</option>
+        <option value="MEDIA">Média</option>
+        <option value="ALTA">Alta</option>
+        <option value="CRITICA">Crítica</option>
+      </select>
+    </div>
+  </div>
+</form>
+
+<div class="card">
+  <div class="table-responsive">
+    <table class="table table-hover align-middle mb-0">
+      <thead class="table-light">
+        <tr><th>Protocolo</th><th>Cliente / contrato</th><th>Tipo</th><th>Prioridade</th><th>Status</th><th>Abertura</th><th class="text-end">Ações</th></tr>
+      </thead>
+      <tbody>
+        @for (chamado of chamados(); track chamado.id) {
+          <tr>
+            <td class="fw-semibold text-nowrap">{{ chamado.protocolo }}</td>
+            <td>
+              {{ chamado.clienteNome }}<br />
+              <small class="text-body-secondary">{{ chamado.contratoNumero }} · {{ chamado.descricao }}</small>
+            </td>
+            <td>{{ chamado.tipo.replaceAll('_', ' ') }}</td>
+            <td><app-status-badge [status]="chamado.prioridade" /></td>
+            <td><app-status-badge [status]="chamado.status" /></td>
+            <td class="text-nowrap">{{ chamado.dataAbertura | date: 'dd/MM/yyyy HH:mm' }}</td>
+            <td class="text-end text-nowrap">
+              @for (acao of acoes(chamado); track acao.rel) {
+                <button type="button" class="btn btn-sm" [class]="'btn btn-sm ' + acao.classe" (click)="executar(chamado, acao)">
+                  <i [class]="'bi ' + acao.icone"></i> {{ acao.rotulo }}
+                </button>
+              } @empty {
+                <small class="text-body-secondary">
+                  Fechado em {{ chamado.dataFechamento | date: 'dd/MM/yyyy' }}
+                </small>
+              }
+            </td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="7" class="text-center text-body-secondary py-4">
+              {{ carregando() ? 'Carregando...' : 'Nenhum chamado encontrado' }}
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>
