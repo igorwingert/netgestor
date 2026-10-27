@@ -17,7 +17,6 @@ import br.edu.utfpr.netgestor.repository.EquipamentoRepository;
 import br.edu.utfpr.netgestor.repository.FaturaRepository;
 import br.edu.utfpr.netgestor.repository.OrdemServicoRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,11 +37,19 @@ public class ContratoService {
     private final EnderecoService enderecoService;
     private final CtoService ctoService;
 
+    /** Filtros opcionais: status e clienteId (null = sem filtro). */
     @Transactional(readOnly = true)
-    public List<ContratoResponse> listar() {
-        return contratoRepository.findAll(Sort.by("numero")).stream()
+    public List<ContratoResponse> listar(StatusContrato status, Long clienteId) {
+        return contratoRepository.buscar(status, clienteId).stream()
                 .map(ContratoResponse::de)
                 .toList();
+    }
+
+    /** Sub-recurso GET /api/clientes/{clienteId}/contratos. */
+    @Transactional(readOnly = true)
+    public List<ContratoResponse> listarPorCliente(Long clienteId) {
+        clienteService.buscarEntidade(clienteId); // 404 se o cliente não existir
+        return listar(null, clienteId);
     }
 
     @Transactional(readOnly = true)
@@ -87,6 +94,44 @@ public class ContratoService {
                     + " Use a ação de cancelar.");
         }
         contratoRepository.delete(contrato);
+    }
+
+    // ---------------------------------------------------------------------
+    // Ações de mudança de status (PATCH /api/contratos/{id}/<acao>).
+    // A regra de cada transição está no enum StatusContrato (podeSuspender...),
+    // que também é usado pelo ContratoAssembler para decidir quais links exibir.
+    // ---------------------------------------------------------------------
+
+    @Transactional
+    public ContratoResponse suspender(Long id) {
+        Contrato contrato = buscarEntidade(id);
+        validarAcao(contrato.getStatus().podeSuspender(), "suspender", contrato);
+        contrato.setStatus(StatusContrato.SUSPENSO);
+        return ContratoResponse.de(contrato);
+    }
+
+    @Transactional
+    public ContratoResponse reativar(Long id) {
+        Contrato contrato = buscarEntidade(id);
+        validarAcao(contrato.getStatus().podeReativar(), "reativar", contrato);
+        contrato.setStatus(StatusContrato.ATIVO);
+        return ContratoResponse.de(contrato);
+    }
+
+    @Transactional
+    public ContratoResponse cancelar(Long id) {
+        Contrato contrato = buscarEntidade(id);
+        validarAcao(contrato.getStatus().podeCancelar(), "cancelar", contrato);
+        // Ao cancelar, a porta da CTO fica livre (o índice único da V1 ignora cancelados)
+        contrato.setStatus(StatusContrato.CANCELADO);
+        return ContratoResponse.de(contrato);
+    }
+
+    private void validarAcao(boolean permitida, String acao, Contrato contrato) {
+        if (!permitida) {
+            throw new RegraNegocioException("Ação '" + acao + "' não permitida para o contrato "
+                    + contrato.getNumero() + " com status " + contrato.getStatus());
+        }
     }
 
     private void copiarDados(ContratoRequest request, Contrato contrato) {

@@ -1,7 +1,9 @@
 package br.edu.utfpr.netgestor.dto;
 
 import br.edu.utfpr.netgestor.domain.Endereco;
+import org.springframework.hateoas.server.core.Relation;
 
+@Relation(collectionRelation = "enderecos", itemRelation = "endereco")
 public record EnderecoResponse(
         Long id,
         Long clienteId,

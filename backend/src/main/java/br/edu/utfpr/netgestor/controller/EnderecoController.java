@@ -1,10 +1,14 @@
 package br.edu.utfpr.netgestor.controller;
 
+import br.edu.utfpr.netgestor.assembler.EnderecoAssembler;
 import br.edu.utfpr.netgestor.dto.EnderecoRequest;
 import br.edu.utfpr.netgestor.dto.EnderecoResponse;
 import br.edu.utfpr.netgestor.service.EnderecoService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -16,10 +20,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-
-import java.net.URI;
-import java.util.List;
 
 /**
  * Endereço é um sub-recurso do cliente:
@@ -34,32 +34,29 @@ import java.util.List;
 public class EnderecoController {
 
     private final EnderecoService enderecoService;
+    private final EnderecoAssembler enderecoAssembler;
 
     @GetMapping("/clientes/{clienteId}/enderecos")
-    public List<EnderecoResponse> listarPorCliente(@PathVariable Long clienteId) {
-        return enderecoService.listarPorCliente(clienteId);
+    public CollectionModel<EntityModel<EnderecoResponse>> listarPorCliente(@PathVariable Long clienteId) {
+        return enderecoAssembler.toCollectionModel(enderecoService.listarPorCliente(clienteId));
     }
 
     @PostMapping("/clientes/{clienteId}/enderecos")
-    public ResponseEntity<EnderecoResponse> cadastrar(@PathVariable Long clienteId,
-                                                      @RequestBody @Valid EnderecoRequest request) {
-        EnderecoResponse criado = enderecoService.cadastrar(clienteId, request);
-        // O Location aponta para a URI própria do endereço, não para a do sub-recurso
-        URI location = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path("/api/enderecos/{id}")
-                .buildAndExpand(criado.id())
-                .toUri();
-        return ResponseEntity.created(location).body(criado);
+    public ResponseEntity<EntityModel<EnderecoResponse>> cadastrar(@PathVariable Long clienteId,
+                                                                   @RequestBody @Valid EnderecoRequest request) {
+        EntityModel<EnderecoResponse> model = enderecoAssembler.toModel(enderecoService.cadastrar(clienteId, request));
+        // O Location aponta para a URI própria do endereço (/api/enderecos/{id})
+        return ResponseEntity.created(model.getRequiredLink(IanaLinkRelations.SELF).toUri()).body(model);
     }
 
     @GetMapping("/enderecos/{id}")
-    public EnderecoResponse buscarPorId(@PathVariable Long id) {
-        return enderecoService.buscarPorId(id);
+    public EntityModel<EnderecoResponse> buscarPorId(@PathVariable Long id) {
+        return enderecoAssembler.toModel(enderecoService.buscarPorId(id));
     }
 
     @PutMapping("/enderecos/{id}")
-    public EnderecoResponse atualizar(@PathVariable Long id, @RequestBody @Valid EnderecoRequest request) {
-        return enderecoService.atualizar(id, request);
+    public EntityModel<EnderecoResponse> atualizar(@PathVariable Long id, @RequestBody @Valid EnderecoRequest request) {
+        return enderecoAssembler.toModel(enderecoService.atualizar(id, request));
     }
 
     @DeleteMapping("/enderecos/{id}")

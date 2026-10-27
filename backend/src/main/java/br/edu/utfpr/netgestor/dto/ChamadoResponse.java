@@ -4,9 +4,11 @@ import br.edu.utfpr.netgestor.domain.Chamado;
 import br.edu.utfpr.netgestor.domain.enums.Prioridade;
 import br.edu.utfpr.netgestor.domain.enums.StatusChamado;
 import br.edu.utfpr.netgestor.domain.enums.TipoChamado;
+import org.springframework.hateoas.server.core.Relation;
 
 import java.time.LocalDateTime;
 
+@Relation(collectionRelation = "chamados", itemRelation = "chamado")
 public record ChamadoResponse(
         Long id,
         String protocolo,

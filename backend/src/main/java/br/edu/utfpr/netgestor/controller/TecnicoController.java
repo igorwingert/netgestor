@@ -1,10 +1,18 @@
 package br.edu.utfpr.netgestor.controller;
 
+import br.edu.utfpr.netgestor.assembler.OrdemServicoAssembler;
+import br.edu.utfpr.netgestor.assembler.TecnicoAssembler;
+import br.edu.utfpr.netgestor.domain.enums.StatusOrdemServico;
+import br.edu.utfpr.netgestor.dto.OrdemServicoResponse;
 import br.edu.utfpr.netgestor.dto.TecnicoRequest;
 import br.edu.utfpr.netgestor.dto.TecnicoResponse;
+import br.edu.utfpr.netgestor.service.OrdemServicoService;
 import br.edu.utfpr.netgestor.service.TecnicoService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -14,49 +22,52 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.net.URI;
-import java.util.List;
-
-/** Recurso /api/tecnicos (técnicos de campo). Mesmo padrão do ClienteController. */
+/** Recurso /api/tecnicos e a agenda de cada técnico: /api/tecnicos/{id}/ordens-servico?status= */
 @RestController
 @RequestMapping("/api/tecnicos")
 @RequiredArgsConstructor
 public class TecnicoController {
 
     private final TecnicoService tecnicoService;
+    private final TecnicoAssembler tecnicoAssembler;
+    private final OrdemServicoService ordemServicoService;
+    private final OrdemServicoAssembler ordemServicoAssembler;
 
     @GetMapping
-    public List<TecnicoResponse> listar() {
-        return tecnicoService.listar();
+    public CollectionModel<EntityModel<TecnicoResponse>> listar() {
+        return tecnicoAssembler.toCollectionModel(tecnicoService.listar());
     }
 
     @GetMapping("/{id}")
-    public TecnicoResponse buscarPorId(@PathVariable Long id) {
-        return tecnicoService.buscarPorId(id);
+    public EntityModel<TecnicoResponse> buscarPorId(@PathVariable Long id) {
+        return tecnicoAssembler.toModel(tecnicoService.buscarPorId(id));
     }
 
     @PostMapping
-    public ResponseEntity<TecnicoResponse> cadastrar(@RequestBody @Valid TecnicoRequest request) {
-        TecnicoResponse criado = tecnicoService.cadastrar(request);
-        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
-                .path("/{id}")
-                .buildAndExpand(criado.id())
-                .toUri();
-        return ResponseEntity.created(location).body(criado);
+    public ResponseEntity<EntityModel<TecnicoResponse>> cadastrar(@RequestBody @Valid TecnicoRequest request) {
+        EntityModel<TecnicoResponse> model = tecnicoAssembler.toModel(tecnicoService.cadastrar(request));
+        return ResponseEntity.created(model.getRequiredLink(IanaLinkRelations.SELF).toUri()).body(model);
     }
 
     @PutMapping("/{id}")
-    public TecnicoResponse atualizar(@PathVariable Long id, @RequestBody @Valid TecnicoRequest request) {
-        return tecnicoService.atualizar(id, request);
+    public EntityModel<TecnicoResponse> atualizar(@PathVariable Long id, @RequestBody @Valid TecnicoRequest request) {
+        return tecnicoAssembler.toModel(tecnicoService.atualizar(id, request));
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void excluir(@PathVariable Long id) {
         tecnicoService.excluir(id);
+    }
+
+    @GetMapping("/{id}/ordens-servico")
+    public CollectionModel<EntityModel<OrdemServicoResponse>> listarOrdensServico(
+            @PathVariable Long id,
+            @RequestParam(required = false) StatusOrdemServico status) {
+        return ordemServicoAssembler.toCollectionModel(ordemServicoService.listarPorTecnico(id, status));
     }
 }

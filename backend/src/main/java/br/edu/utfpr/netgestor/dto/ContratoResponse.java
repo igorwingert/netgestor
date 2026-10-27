@@ -2,6 +2,7 @@ package br.edu.utfpr.netgestor.dto;
 
 import br.edu.utfpr.netgestor.domain.Contrato;
 import br.edu.utfpr.netgestor.domain.enums.StatusContrato;
+import org.springframework.hateoas.server.core.Relation;
 
 import java.time.LocalDate;
 
@@ -9,6 +10,7 @@ import java.time.LocalDate;
  * Além dos ids, traz nomes "achatados" (clienteNome, planoNome...) para o frontend
  * exibir a listagem sem precisar de uma requisição extra por contrato.
  */
+@Relation(collectionRelation = "contratos", itemRelation = "contrato")
 public record ContratoResponse(
         Long id,
         String numero,

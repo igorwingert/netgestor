@@ -1,10 +1,17 @@
 package br.edu.utfpr.netgestor.controller;
 
+import br.edu.utfpr.netgestor.assembler.CtoAssembler;
+import br.edu.utfpr.netgestor.assembler.OltAssembler;
+import br.edu.utfpr.netgestor.dto.CtoResponse;
 import br.edu.utfpr.netgestor.dto.OltRequest;
 import br.edu.utfpr.netgestor.dto.OltResponse;
+import br.edu.utfpr.netgestor.service.CtoService;
 import br.edu.utfpr.netgestor.service.OltService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -16,47 +23,47 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.net.URI;
-import java.util.List;
-
-/** Recurso /api/olts (OLTs da rede óptica). Mesmo padrão do ClienteController. */
+/** Recurso /api/olts e o sub-recurso /api/olts/{id}/ctos. */
 @RestController
 @RequestMapping("/api/olts")
 @RequiredArgsConstructor
 public class OltController {
 
     private final OltService oltService;
+    private final OltAssembler oltAssembler;
+    private final CtoService ctoService;
+    private final CtoAssembler ctoAssembler;
 
     @GetMapping
-    public List<OltResponse> listar() {
-        return oltService.listar();
+    public CollectionModel<EntityModel<OltResponse>> listar() {
+        return oltAssembler.toCollectionModel(oltService.listar());
     }
 
     @GetMapping("/{id}")
-    public OltResponse buscarPorId(@PathVariable Long id) {
-        return oltService.buscarPorId(id);
+    public EntityModel<OltResponse> buscarPorId(@PathVariable Long id) {
+        return oltAssembler.toModel(oltService.buscarPorId(id));
     }
 
     @PostMapping
-    public ResponseEntity<OltResponse> cadastrar(@RequestBody @Valid OltRequest request) {
-        OltResponse criado = oltService.cadastrar(request);
-        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
-                .path("/{id}")
-                .buildAndExpand(criado.id())
-                .toUri();
-        return ResponseEntity.created(location).body(criado);
+    public ResponseEntity<EntityModel<OltResponse>> cadastrar(@RequestBody @Valid OltRequest request) {
+        EntityModel<OltResponse> model = oltAssembler.toModel(oltService.cadastrar(request));
+        return ResponseEntity.created(model.getRequiredLink(IanaLinkRelations.SELF).toUri()).body(model);
     }
 
     @PutMapping("/{id}")
-    public OltResponse atualizar(@PathVariable Long id, @RequestBody @Valid OltRequest request) {
-        return oltService.atualizar(id, request);
+    public EntityModel<OltResponse> atualizar(@PathVariable Long id, @RequestBody @Valid OltRequest request) {
+        return oltAssembler.toModel(oltService.atualizar(id, request));
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void excluir(@PathVariable Long id) {
         oltService.excluir(id);
+    }
+
+    @GetMapping("/{id}/ctos")
+    public CollectionModel<EntityModel<CtoResponse>> listarCtos(@PathVariable Long id) {
+        return ctoAssembler.toCollectionModel(ctoService.listarPorOlt(id));
     }
 }

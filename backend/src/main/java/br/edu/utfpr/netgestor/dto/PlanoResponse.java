@@ -2,9 +2,11 @@ package br.edu.utfpr.netgestor.dto;
 
 import br.edu.utfpr.netgestor.domain.Plano;
 import br.edu.utfpr.netgestor.domain.enums.Tecnologia;
+import org.springframework.hateoas.server.core.Relation;
 
 import java.math.BigDecimal;
 
+@Relation(collectionRelation = "planos", itemRelation = "plano")
 public record PlanoResponse(
         Long id,
         String nome,

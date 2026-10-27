@@ -1,10 +1,14 @@
 package br.edu.utfpr.netgestor.controller;
 
+import br.edu.utfpr.netgestor.assembler.PagamentoAssembler;
 import br.edu.utfpr.netgestor.dto.PagamentoRequest;
 import br.edu.utfpr.netgestor.dto.PagamentoResponse;
 import br.edu.utfpr.netgestor.service.PagamentoService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -16,15 +20,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-
-import java.net.URI;
-import java.util.List;
 
 /**
  * Pagamento é um sub-recurso da fatura:
  *   GET  /api/faturas/{faturaId}/pagamentos
- *   POST /api/faturas/{faturaId}/pagamentos
+ *   POST /api/faturas/{faturaId}/pagamentos   (link "registrar-pagamento" da fatura)
  * e cada pagamento tem a sua URI própria: GET/PUT/DELETE /api/pagamentos/{id}
  */
 @RestController
@@ -33,31 +33,28 @@ import java.util.List;
 public class PagamentoController {
 
     private final PagamentoService pagamentoService;
+    private final PagamentoAssembler pagamentoAssembler;
 
     @GetMapping("/faturas/{faturaId}/pagamentos")
-    public List<PagamentoResponse> listarPorFatura(@PathVariable Long faturaId) {
-        return pagamentoService.listarPorFatura(faturaId);
+    public CollectionModel<EntityModel<PagamentoResponse>> listarPorFatura(@PathVariable Long faturaId) {
+        return pagamentoAssembler.toCollectionModel(pagamentoService.listarPorFatura(faturaId));
     }
 
     @PostMapping("/faturas/{faturaId}/pagamentos")
-    public ResponseEntity<PagamentoResponse> cadastrar(@PathVariable Long faturaId,
-                                                       @RequestBody @Valid PagamentoRequest request) {
-        PagamentoResponse criado = pagamentoService.cadastrar(faturaId, request);
-        URI location = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path("/api/pagamentos/{id}")
-                .buildAndExpand(criado.id())
-                .toUri();
-        return ResponseEntity.created(location).body(criado);
+    public ResponseEntity<EntityModel<PagamentoResponse>> cadastrar(@PathVariable Long faturaId,
+                                                                    @RequestBody @Valid PagamentoRequest request) {
+        EntityModel<PagamentoResponse> model = pagamentoAssembler.toModel(pagamentoService.cadastrar(faturaId, request));
+        return ResponseEntity.created(model.getRequiredLink(IanaLinkRelations.SELF).toUri()).body(model);
     }
 
     @GetMapping("/pagamentos/{id}")
-    public PagamentoResponse buscarPorId(@PathVariable Long id) {
-        return pagamentoService.buscarPorId(id);
+    public EntityModel<PagamentoResponse> buscarPorId(@PathVariable Long id) {
+        return pagamentoAssembler.toModel(pagamentoService.buscarPorId(id));
     }
 
     @PutMapping("/pagamentos/{id}")
-    public PagamentoResponse atualizar(@PathVariable Long id, @RequestBody @Valid PagamentoRequest request) {
-        return pagamentoService.atualizar(id, request);
+    public EntityModel<PagamentoResponse> atualizar(@PathVariable Long id, @RequestBody @Valid PagamentoRequest request) {
+        return pagamentoAssembler.toModel(pagamentoService.atualizar(id, request));
     }
 
     @DeleteMapping("/pagamentos/{id}")

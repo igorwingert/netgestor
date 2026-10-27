@@ -1,7 +1,10 @@
 package br.edu.utfpr.netgestor.service;
 
+import br.edu.utfpr.netgestor.domain.Contrato;
 import br.edu.utfpr.netgestor.domain.Equipamento;
+import br.edu.utfpr.netgestor.domain.enums.StatusContrato;
 import br.edu.utfpr.netgestor.domain.enums.StatusEquipamento;
+import br.edu.utfpr.netgestor.domain.enums.TipoEquipamento;
 import br.edu.utfpr.netgestor.dto.EquipamentoRequest;
 import br.edu.utfpr.netgestor.dto.EquipamentoResponse;
 import br.edu.utfpr.netgestor.exception.RecursoNaoEncontradoException;
@@ -9,7 +12,6 @@ import br.edu.utfpr.netgestor.exception.RegraNegocioException;
 import br.edu.utfpr.netgestor.repository.EquipamentoRepository;
 import br.edu.utfpr.netgestor.repository.OrdemServicoRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,12 +23,21 @@ public class EquipamentoService {
 
     private final EquipamentoRepository equipamentoRepository;
     private final OrdemServicoRepository ordemServicoRepository;
+    private final ContratoService contratoService;
 
+    /** Filtros opcionais: status, tipo e contratoId (null = sem filtro). */
     @Transactional(readOnly = true)
-    public List<EquipamentoResponse> listar() {
-        return equipamentoRepository.findAll(Sort.by("id")).stream()
+    public List<EquipamentoResponse> listar(StatusEquipamento status, TipoEquipamento tipo, Long contratoId) {
+        return equipamentoRepository.buscar(status, tipo, contratoId).stream()
                 .map(EquipamentoResponse::de)
                 .toList();
+    }
+
+    /** Sub-recurso GET /api/contratos/{contratoId}/equipamentos (equipamentos em comodato). */
+    @Transactional(readOnly = true)
+    public List<EquipamentoResponse> listarPorContrato(Long contratoId) {
+        contratoService.buscarEntidade(contratoId); // 404 se o contrato não existir
+        return listar(null, null, contratoId);
     }
 
     @Transactional(readOnly = true)
@@ -67,6 +78,42 @@ public class EquipamentoService {
                     + " aparece no histórico de ordens de serviço e não pode ser excluído");
         }
         equipamentoRepository.delete(equipamento);
+    }
+
+    // ---------------------------------------------------------------------
+    // Ações de comodato:
+    //   vincular    (ESTOQUE   -> INSTALADO): o equipamento passa a ficar com o contrato
+    //   desvincular (INSTALADO -> ESTOQUE):   o equipamento volta para o estoque
+    // ---------------------------------------------------------------------
+
+    @Transactional
+    public EquipamentoResponse vincular(Long id, Long contratoId) {
+        Equipamento equipamento = buscarEntidade(id);
+        validarAcao(equipamento.getStatus().podeVincular(), "vincular", equipamento);
+        Contrato contrato = contratoService.buscarEntidade(contratoId);
+        if (contrato.getStatus() == StatusContrato.CANCELADO) {
+            throw new RegraNegocioException("O contrato " + contrato.getNumero()
+                    + " está cancelado e não pode receber equipamentos");
+        }
+        equipamento.setContrato(contrato);
+        equipamento.setStatus(StatusEquipamento.INSTALADO);
+        return EquipamentoResponse.de(equipamento);
+    }
+
+    @Transactional
+    public EquipamentoResponse desvincular(Long id) {
+        Equipamento equipamento = buscarEntidade(id);
+        validarAcao(equipamento.getStatus().podeDesvincular(), "desvincular", equipamento);
+        equipamento.setContrato(null);
+        equipamento.setStatus(StatusEquipamento.ESTOQUE);
+        return EquipamentoResponse.de(equipamento);
+    }
+
+    private void validarAcao(boolean permitida, String acao, Equipamento equipamento) {
+        if (!permitida) {
+            throw new RegraNegocioException("Ação '" + acao + "' não permitida para o equipamento "
+                    + equipamento.getNumeroSerie() + " com status " + equipamento.getStatus());
+        }
     }
 
     private void copiarDados(EquipamentoRequest request, Equipamento equipamento) {

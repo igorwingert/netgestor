@@ -1,7 +1,9 @@
 package br.edu.utfpr.netgestor.dto;
 
 import br.edu.utfpr.netgestor.domain.Tecnico;
+import org.springframework.hateoas.server.core.Relation;
 
+@Relation(collectionRelation = "tecnicos", itemRelation = "tecnico")
 public record TecnicoResponse(
         Long id,
         String nome,

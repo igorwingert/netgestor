@@ -1,7 +1,9 @@
 package br.edu.utfpr.netgestor.dto;
 
 import br.edu.utfpr.netgestor.domain.Olt;
+import org.springframework.hateoas.server.core.Relation;
 
+@Relation(collectionRelation = "olts", itemRelation = "olt")
 public record OltResponse(
         Long id,
         String nome,

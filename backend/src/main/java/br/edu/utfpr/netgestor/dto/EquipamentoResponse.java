@@ -3,7 +3,9 @@ package br.edu.utfpr.netgestor.dto;
 import br.edu.utfpr.netgestor.domain.Equipamento;
 import br.edu.utfpr.netgestor.domain.enums.StatusEquipamento;
 import br.edu.utfpr.netgestor.domain.enums.TipoEquipamento;
+import org.springframework.hateoas.server.core.Relation;
 
+@Relation(collectionRelation = "equipamentos", itemRelation = "equipamento")
 public record EquipamentoResponse(
         Long id,
         TipoEquipamento tipo,

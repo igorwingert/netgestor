@@ -11,10 +11,10 @@ import br.edu.utfpr.netgestor.exception.RecursoNaoEncontradoException;
 import br.edu.utfpr.netgestor.exception.RegraNegocioException;
 import br.edu.utfpr.netgestor.repository.OrdemServicoRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.time.Year;
 import java.util.HashSet;
 import java.util.List;
@@ -30,11 +30,26 @@ public class OrdemServicoService {
     private final TecnicoService tecnicoService;
     private final EquipamentoService equipamentoService;
 
+    /** Filtros opcionais: status, tecnicoId e contratoId (null = sem filtro). */
     @Transactional(readOnly = true)
-    public List<OrdemServicoResponse> listar() {
-        return ordemServicoRepository.findAll(Sort.by("dataAgendada")).stream()
+    public List<OrdemServicoResponse> listar(StatusOrdemServico status, Long tecnicoId, Long contratoId) {
+        return ordemServicoRepository.buscar(status, tecnicoId, contratoId).stream()
                 .map(OrdemServicoResponse::de)
                 .toList();
+    }
+
+    /** Sub-recurso GET /api/tecnicos/{tecnicoId}/ordens-servico?status= (a agenda do técnico). */
+    @Transactional(readOnly = true)
+    public List<OrdemServicoResponse> listarPorTecnico(Long tecnicoId, StatusOrdemServico status) {
+        tecnicoService.buscarEntidade(tecnicoId); // 404 se o técnico não existir
+        return listar(status, tecnicoId, null);
+    }
+
+    /** Sub-recurso GET /api/contratos/{contratoId}/ordens-servico. */
+    @Transactional(readOnly = true)
+    public List<OrdemServicoResponse> listarPorContrato(Long contratoId) {
+        contratoService.buscarEntidade(contratoId); // 404 se o contrato não existir
+        return listar(null, null, contratoId);
     }
 
     @Transactional(readOnly = true)
@@ -58,7 +73,7 @@ public class OrdemServicoService {
     @Transactional
     public OrdemServicoResponse atualizar(Long id, OrdemServicoRequest request) {
         OrdemServico os = buscarEntidade(id);
-        if (os.getStatus() == StatusOrdemServico.CONCLUIDA || os.getStatus() == StatusOrdemServico.CANCELADA) {
+        if (!os.getStatus().podeEditar()) {
             throw new RegraNegocioException("A ordem de serviço " + os.getNumero() + " está "
                     + os.getStatus() + " e não pode ser alterada");
         }
@@ -75,6 +90,44 @@ public class OrdemServicoService {
         }
         // As linhas da tabela ordem_servico_equipamento são removidas junto
         ordemServicoRepository.delete(os);
+    }
+
+    // ---------------------------------------------------------------------
+    // Ações: AGENDADA -> iniciar -> EM_EXECUCAO -> concluir -> CONCLUIDA
+    //        (AGENDADA ou EM_EXECUCAO) -> cancelar -> CANCELADA
+    // ---------------------------------------------------------------------
+
+    @Transactional
+    public OrdemServicoResponse iniciar(Long id) {
+        OrdemServico os = buscarEntidade(id);
+        validarAcao(os.getStatus().podeIniciar(), "iniciar", os);
+        os.setStatus(StatusOrdemServico.EM_EXECUCAO);
+        return OrdemServicoResponse.de(os);
+    }
+
+    /** Ao concluir, registra a data/hora de conclusão. */
+    @Transactional
+    public OrdemServicoResponse concluir(Long id) {
+        OrdemServico os = buscarEntidade(id);
+        validarAcao(os.getStatus().podeConcluir(), "concluir", os);
+        os.setStatus(StatusOrdemServico.CONCLUIDA);
+        os.setDataConclusao(LocalDateTime.now());
+        return OrdemServicoResponse.de(os);
+    }
+
+    @Transactional
+    public OrdemServicoResponse cancelar(Long id) {
+        OrdemServico os = buscarEntidade(id);
+        validarAcao(os.getStatus().podeCancelar(), "cancelar", os);
+        os.setStatus(StatusOrdemServico.CANCELADA);
+        return OrdemServicoResponse.de(os);
+    }
+
+    private void validarAcao(boolean permitida, String acao, OrdemServico os) {
+        if (!permitida) {
+            throw new RegraNegocioException("Ação '" + acao + "' não permitida para a ordem de serviço "
+                    + os.getNumero() + " com status " + os.getStatus());
+        }
     }
 
     private void copiarDados(OrdemServicoRequest request, OrdemServico os) {

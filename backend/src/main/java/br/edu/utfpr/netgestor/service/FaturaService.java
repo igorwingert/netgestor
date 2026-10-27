@@ -10,11 +10,11 @@ import br.edu.utfpr.netgestor.exception.RecursoNaoEncontradoException;
 import br.edu.utfpr.netgestor.exception.RegraNegocioException;
 import br.edu.utfpr.netgestor.repository.FaturaRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.List;
 
 @Service
@@ -24,11 +24,20 @@ public class FaturaService {
     private final FaturaRepository faturaRepository;
     private final ContratoService contratoService;
 
+    /** Filtros opcionais: status, competência (mês, ex.: 2026-10) e contratoId (null = sem filtro). */
     @Transactional(readOnly = true)
-    public List<FaturaResponse> listar() {
-        return faturaRepository.findAll(Sort.by("competencia", "id")).stream()
+    public List<FaturaResponse> listar(StatusFatura status, YearMonth competencia, Long contratoId) {
+        LocalDate primeiroDia = competencia == null ? null : competencia.atDay(1);
+        return faturaRepository.buscar(status, primeiroDia, contratoId).stream()
                 .map(FaturaResponse::de)
                 .toList();
+    }
+
+    /** Sub-recurso GET /api/contratos/{contratoId}/faturas. */
+    @Transactional(readOnly = true)
+    public List<FaturaResponse> listarPorContrato(Long contratoId) {
+        contratoService.buscarEntidade(contratoId); // 404 se o contrato não existir
+        return listar(null, null, contratoId);
     }
 
     @Transactional(readOnly = true)
@@ -51,11 +60,23 @@ public class FaturaService {
     @Transactional
     public FaturaResponse atualizar(Long id, FaturaRequest request) {
         Fatura fatura = buscarEntidade(id);
-        if (fatura.getStatus() == StatusFatura.PAGA || fatura.getStatus() == StatusFatura.CANCELADA) {
+        if (!fatura.getStatus().emAberto()) {
             throw new RegraNegocioException("A fatura " + id + " está " + fatura.getStatus()
                     + " e não pode ser alterada");
         }
         copiarDados(request, fatura);
+        return FaturaResponse.de(fatura);
+    }
+
+    /** Ação PATCH /api/faturas/{id}/cancelar: só fatura em aberto (ABERTA ou VENCIDA). */
+    @Transactional
+    public FaturaResponse cancelar(Long id) {
+        Fatura fatura = buscarEntidade(id);
+        if (!fatura.getStatus().emAberto()) {
+            throw new RegraNegocioException("Ação 'cancelar' não permitida para a fatura " + id
+                    + " com status " + fatura.getStatus());
+        }
+        fatura.setStatus(StatusFatura.CANCELADA);
         return FaturaResponse.de(fatura);
     }
 

@@ -2,6 +2,7 @@ package br.edu.utfpr.netgestor.service;
 
 import br.edu.utfpr.netgestor.domain.Chamado;
 import br.edu.utfpr.netgestor.domain.Contrato;
+import br.edu.utfpr.netgestor.domain.enums.Prioridade;
 import br.edu.utfpr.netgestor.domain.enums.StatusChamado;
 import br.edu.utfpr.netgestor.domain.enums.StatusContrato;
 import br.edu.utfpr.netgestor.dto.ChamadoRequest;
@@ -11,10 +12,10 @@ import br.edu.utfpr.netgestor.exception.RegraNegocioException;
 import br.edu.utfpr.netgestor.repository.ChamadoRepository;
 import br.edu.utfpr.netgestor.repository.OrdemServicoRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.time.Year;
 import java.util.List;
 
@@ -27,11 +28,19 @@ public class ChamadoService {
     private final ContratoService contratoService;
     private final UsuarioService usuarioService;
 
+    /** Filtros opcionais: status, prioridade e contratoId (null = sem filtro). */
     @Transactional(readOnly = true)
-    public List<ChamadoResponse> listar() {
-        return chamadoRepository.findAll(Sort.by(Sort.Direction.DESC, "dataAbertura")).stream()
+    public List<ChamadoResponse> listar(StatusChamado status, Prioridade prioridade, Long contratoId) {
+        return chamadoRepository.buscar(status, prioridade, contratoId).stream()
                 .map(ChamadoResponse::de)
                 .toList();
+    }
+
+    /** Sub-recurso GET /api/contratos/{contratoId}/chamados. */
+    @Transactional(readOnly = true)
+    public List<ChamadoResponse> listarPorContrato(Long contratoId) {
+        contratoService.buscarEntidade(contratoId); // 404 se o contrato não existir
+        return listar(null, null, contratoId);
     }
 
     @Transactional(readOnly = true)
@@ -73,6 +82,43 @@ public class ChamadoService {
                     + " originou ordens de serviço e não pode ser excluído");
         }
         chamadoRepository.delete(chamado);
+    }
+
+    // ---------------------------------------------------------------------
+    // Ações: ABERTO -> iniciar-atendimento -> EM_ATENDIMENTO -> resolver -> RESOLVIDO -> fechar -> FECHADO
+    // ---------------------------------------------------------------------
+
+    @Transactional
+    public ChamadoResponse iniciarAtendimento(Long id) {
+        Chamado chamado = buscarEntidade(id);
+        validarAcao(chamado.getStatus().podeIniciarAtendimento(), "iniciar-atendimento", chamado);
+        chamado.setStatus(StatusChamado.EM_ATENDIMENTO);
+        return ChamadoResponse.de(chamado);
+    }
+
+    @Transactional
+    public ChamadoResponse resolver(Long id) {
+        Chamado chamado = buscarEntidade(id);
+        validarAcao(chamado.getStatus().podeResolver(), "resolver", chamado);
+        chamado.setStatus(StatusChamado.RESOLVIDO);
+        return ChamadoResponse.de(chamado);
+    }
+
+    /** Ao fechar, registra a data/hora de fechamento. */
+    @Transactional
+    public ChamadoResponse fechar(Long id) {
+        Chamado chamado = buscarEntidade(id);
+        validarAcao(chamado.getStatus().podeFechar(), "fechar", chamado);
+        chamado.setStatus(StatusChamado.FECHADO);
+        chamado.setDataFechamento(LocalDateTime.now());
+        return ChamadoResponse.de(chamado);
+    }
+
+    private void validarAcao(boolean permitida, String acao, Chamado chamado) {
+        if (!permitida) {
+            throw new RegraNegocioException("Ação '" + acao + "' não permitida para o chamado "
+                    + chamado.getProtocolo() + " com status " + chamado.getStatus());
+        }
     }
 
     private void copiarDados(ChamadoRequest request, Chamado chamado) {

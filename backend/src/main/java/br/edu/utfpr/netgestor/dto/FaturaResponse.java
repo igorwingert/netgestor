@@ -2,11 +2,13 @@ package br.edu.utfpr.netgestor.dto;
 
 import br.edu.utfpr.netgestor.domain.Fatura;
 import br.edu.utfpr.netgestor.domain.enums.StatusFatura;
+import org.springframework.hateoas.server.core.Relation;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.YearMonth;
 
+@Relation(collectionRelation = "faturas", itemRelation = "fatura")
 public record FaturaResponse(
         Long id,
         Long contratoId,

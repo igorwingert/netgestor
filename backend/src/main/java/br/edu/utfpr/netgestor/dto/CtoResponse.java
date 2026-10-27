@@ -1,9 +1,11 @@
 package br.edu.utfpr.netgestor.dto;
 
 import br.edu.utfpr.netgestor.domain.Cto;
+import org.springframework.hateoas.server.core.Relation;
 
 import java.math.BigDecimal;
 
+@Relation(collectionRelation = "ctos", itemRelation = "cto")
 public record CtoResponse(
         Long id,
         String identificacao,

@@ -3,11 +3,13 @@ package br.edu.utfpr.netgestor.dto;
 import br.edu.utfpr.netgestor.domain.OrdemServico;
 import br.edu.utfpr.netgestor.domain.enums.StatusOrdemServico;
 import br.edu.utfpr.netgestor.domain.enums.TipoOrdemServico;
+import org.springframework.hateoas.server.core.Relation;
 
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 
+@Relation(collectionRelation = "ordensServico", itemRelation = "ordemServico")
 public record OrdemServicoResponse(
         Long id,
         String numero,

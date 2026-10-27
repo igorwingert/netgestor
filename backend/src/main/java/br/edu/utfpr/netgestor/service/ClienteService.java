@@ -8,7 +8,6 @@ import br.edu.utfpr.netgestor.exception.RegraNegocioException;
 import br.edu.utfpr.netgestor.repository.ClienteRepository;
 import br.edu.utfpr.netgestor.repository.ContratoRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,9 +30,13 @@ public class ClienteService {
     private final ClienteRepository clienteRepository;
     private final ContratoRepository contratoRepository;
 
+    /** Filtros opcionais: nome (parte do nome) e cpfCnpj (parte do documento, com ou sem máscara). */
     @Transactional(readOnly = true)
-    public List<ClienteResponse> listar() {
-        return clienteRepository.findAll(Sort.by("nome")).stream()
+    public List<ClienteResponse> listar(String nome, String cpfCnpj) {
+        // Filtro não informado vira "": na consulta, LIKE '%%' aceita qualquer valor
+        String filtroNome = nome == null ? "" : nome.trim();
+        String filtroDocumento = cpfCnpj == null ? "" : cpfCnpj.replaceAll("\\D", "");
+        return clienteRepository.buscar(filtroNome, filtroDocumento).stream()
                 .map(ClienteResponse::de)
                 .toList();
     }

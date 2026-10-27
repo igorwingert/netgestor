@@ -1,10 +1,12 @@
 package br.edu.utfpr.netgestor.service;
 
+import br.edu.utfpr.netgestor.domain.Contrato;
 import br.edu.utfpr.netgestor.domain.Cto;
 import br.edu.utfpr.netgestor.domain.Olt;
 import br.edu.utfpr.netgestor.domain.enums.StatusContrato;
 import br.edu.utfpr.netgestor.dto.CtoRequest;
 import br.edu.utfpr.netgestor.dto.CtoResponse;
+import br.edu.utfpr.netgestor.dto.OcupacaoCtoResponse;
 import br.edu.utfpr.netgestor.exception.RecursoNaoEncontradoException;
 import br.edu.utfpr.netgestor.exception.RegraNegocioException;
 import br.edu.utfpr.netgestor.repository.ContratoRepository;
@@ -14,7 +16,10 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -29,6 +34,38 @@ public class CtoService {
         return ctoRepository.findAll(Sort.by("identificacao")).stream()
                 .map(CtoResponse::de)
                 .toList();
+    }
+
+    /** Sub-recurso GET /api/olts/{oltId}/ctos. */
+    @Transactional(readOnly = true)
+    public List<CtoResponse> listarPorOlt(Long oltId) {
+        oltService.buscarEntidade(oltId); // 404 se a OLT não existir
+        return ctoRepository.findByOltIdOrderByIdentificacao(oltId).stream()
+                .map(CtoResponse::de)
+                .toList();
+    }
+
+    /** GET /api/ctos/{id}/ocupacao: lista as portas de 1 até a capacidade, indicando quem ocupa cada uma. */
+    @Transactional(readOnly = true)
+    public OcupacaoCtoResponse ocupacao(Long id) {
+        Cto cto = buscarEntidade(id);
+
+        // porta -> contrato que a ocupa (contratos cancelados não ocupam porta)
+        Map<Integer, Contrato> ocupadas = new HashMap<>();
+        for (Contrato contrato : contratoRepository.findByCtoIdAndStatusNotOrderByPortaCto(id, StatusContrato.CANCELADO)) {
+            ocupadas.put(contrato.getPortaCto(), contrato);
+        }
+
+        List<OcupacaoCtoResponse.Porta> portas = new ArrayList<>();
+        for (int numero = 1; numero <= cto.getCapacidade(); numero++) {
+            Contrato contrato = ocupadas.get(numero);
+            portas.add(contrato == null
+                    ? new OcupacaoCtoResponse.Porta(numero, true, null, null, null)
+                    : new OcupacaoCtoResponse.Porta(numero, false, contrato.getId(),
+                            contrato.getNumero(), contrato.getCliente().getNome()));
+        }
+        return new OcupacaoCtoResponse(cto.getId(), cto.getIdentificacao(), cto.getCapacidade(),
+                ocupadas.size(), cto.getCapacidade() - ocupadas.size(), portas);
     }
 
     @Transactional(readOnly = true)

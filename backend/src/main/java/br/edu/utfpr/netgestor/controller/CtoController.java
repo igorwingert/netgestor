@@ -1,10 +1,15 @@
 package br.edu.utfpr.netgestor.controller;
 
+import br.edu.utfpr.netgestor.assembler.CtoAssembler;
 import br.edu.utfpr.netgestor.dto.CtoRequest;
 import br.edu.utfpr.netgestor.dto.CtoResponse;
+import br.edu.utfpr.netgestor.dto.OcupacaoCtoResponse;
 import br.edu.utfpr.netgestor.service.CtoService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -16,47 +21,51 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.net.URI;
-import java.util.List;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
-/** Recurso /api/ctos (caixas de terminação óptica). Mesmo padrão do ClienteController. */
+/** Recurso /api/ctos e a consulta de ocupação das portas: /api/ctos/{id}/ocupacao */
 @RestController
 @RequestMapping("/api/ctos")
 @RequiredArgsConstructor
 public class CtoController {
 
     private final CtoService ctoService;
+    private final CtoAssembler ctoAssembler;
 
     @GetMapping
-    public List<CtoResponse> listar() {
-        return ctoService.listar();
+    public CollectionModel<EntityModel<CtoResponse>> listar() {
+        return ctoAssembler.toCollectionModel(ctoService.listar());
     }
 
     @GetMapping("/{id}")
-    public CtoResponse buscarPorId(@PathVariable Long id) {
-        return ctoService.buscarPorId(id);
+    public EntityModel<CtoResponse> buscarPorId(@PathVariable Long id) {
+        return ctoAssembler.toModel(ctoService.buscarPorId(id));
     }
 
     @PostMapping
-    public ResponseEntity<CtoResponse> cadastrar(@RequestBody @Valid CtoRequest request) {
-        CtoResponse criado = ctoService.cadastrar(request);
-        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
-                .path("/{id}")
-                .buildAndExpand(criado.id())
-                .toUri();
-        return ResponseEntity.created(location).body(criado);
+    public ResponseEntity<EntityModel<CtoResponse>> cadastrar(@RequestBody @Valid CtoRequest request) {
+        EntityModel<CtoResponse> model = ctoAssembler.toModel(ctoService.cadastrar(request));
+        return ResponseEntity.created(model.getRequiredLink(IanaLinkRelations.SELF).toUri()).body(model);
     }
 
     @PutMapping("/{id}")
-    public CtoResponse atualizar(@PathVariable Long id, @RequestBody @Valid CtoRequest request) {
-        return ctoService.atualizar(id, request);
+    public EntityModel<CtoResponse> atualizar(@PathVariable Long id, @RequestBody @Valid CtoRequest request) {
+        return ctoAssembler.toModel(ctoService.atualizar(id, request));
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void excluir(@PathVariable Long id) {
         ctoService.excluir(id);
+    }
+
+    /** Portas usadas e livres da CTO. Não é um recurso com CRUD, então os links ficam aqui mesmo. */
+    @GetMapping("/{id}/ocupacao")
+    public EntityModel<OcupacaoCtoResponse> ocupacao(@PathVariable Long id) {
+        return EntityModel.of(ctoService.ocupacao(id),
+                linkTo(methodOn(CtoController.class).ocupacao(id)).withSelfRel(),
+                linkTo(methodOn(CtoController.class).buscarPorId(id)).withRel("cto"));
     }
 }

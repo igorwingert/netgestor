@@ -47,11 +47,9 @@ public class PagamentoService {
     @Transactional
     public PagamentoResponse cadastrar(Long faturaId, PagamentoRequest request) {
         Fatura fatura = faturaService.buscarEntidade(faturaId);
-        if (fatura.getStatus() == StatusFatura.PAGA) {
-            throw new RegraNegocioException("A fatura " + faturaId + " já está paga");
-        }
-        if (fatura.getStatus() == StatusFatura.CANCELADA) {
-            throw new RegraNegocioException("A fatura " + faturaId + " está cancelada e não aceita pagamentos");
+        if (!fatura.getStatus().emAberto()) {
+            throw new RegraNegocioException("A fatura " + faturaId + " está " + fatura.getStatus()
+                    + " e não aceita pagamentos");
         }
 
         Pagamento pagamento = new Pagamento();
