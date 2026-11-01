@@ -27,7 +27,7 @@ seguindo o **nível 3 do Modelo de Maturidade de Richardson**.
 13. [Testes](#13-testes)
 14. [Decisões técnicas](#14-decisões-técnicas)
 15. [Referências](#15-referências)
-16. [Declaração de uso de ferramentas de IA](#16-declaração-de-uso-de-ferramentas-de-ia)
+16. [Ferramentas de apoio](#16-ferramentas-de-apoio)
 
 ---
 
@@ -492,4 +492,10 @@ No Postman: importar os dois arquivos, selecionar o environment **NetGestor - Lo
 - Angular Documentation: https://angular.dev
 - Bootstrap 5.3 Documentation: https://getbootstrap.com/docs/5.3/
 - Postman Learning Center: https://learning.postman.com/docs/ · Newman: https://github.com/postmanlabs/newman
-- Receita Federal do Brasil. Instrução Normativa RFB nº 2.229/2024 (CNPJ alfanumérico).pera,
+- Receita Federal do Brasil. Instrução Normativa RFB nº 2.229/2024 (CNPJ alfanumérico).
+
+---
+
+## 16. Ferramentas de apoio
+
+O desenvolvimento contou com o Claude Code (Anthropic) como assistente de programação. A solução foi revisada pelo autor, que a explica nos vídeos de apresentação.
