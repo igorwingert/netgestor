@@ -12,7 +12,7 @@ import { ToastService } from '../../core/toast.service';
 import { StatusBadgeComponent } from '../../shared/components/status-badge.component';
 import { ContratoService } from './contrato.service';
 
-/** As ações possíveis de um contrato. O botão só aparece se a API mandar o link (rel) correspondente. */
+/** as acoes possiveis de um contrato. o botao so aparece se a API mandar o link (rel) correspondente. */
 const ACOES_CONTRATO = [
   { rel: 'suspender', rotulo: 'Suspender', icone: 'bi-pause-circle', classe: 'btn-warning' },
   { rel: 'reativar', rotulo: 'Reativar', icone: 'bi-play-circle', classe: 'btn-success' },
@@ -20,14 +20,14 @@ const ACOES_CONTRATO = [
 ];
 
 /**
- * Detalhe do contrato: o melhor exemplo de HATEOAS no frontend.
+ * detalhe do contrato: o melhor exemplo de HATEOAS no frontend.
  *
- * - Os botões de ação são escolhidos pelos _links que a API devolveu:
+ * - os botoes de acao sao escolhidos pelos _links que a API devolveu:
  *   ATIVO -> suspender/cancelar; SUSPENSO -> reativar/cancelar; CANCELADO -> nenhum.
- *   O frontend não repete a regra de negócio: ele apenas segue os links.
- * - As listas relacionadas (faturas, chamados, OS, equipamentos) são buscadas
- *   seguindo os links "faturas", "chamados"... Se o perfil não pode vê-las, o link
- *   nem vem na resposta e a seção não é exibida.
+ *   o frontend nao repete a regra de negocio: ele apenas segue os links.
+ * - as listas relacionadas (faturas, chamados, OS, equipamentos) sao buscadas
+ *   seguindo os links "faturas", "chamados"... se o perfil nao pode ve-las, o link
+ *   nem vem na resposta e a secao nao e exibida.
  */
 @Component({
   selector: 'app-contrato-detalhe',
@@ -52,7 +52,7 @@ export class ContratoDetalheComponent implements OnInit {
 
   protected readonly podeGerenciar = computed(() => this.auth.temPerfil(ATENDIMENTO));
 
-  /** Ações disponíveis = ações cujo link está presente no contrato. */
+  /** acoes disponiveis = acoes cujo link esta presente no contrato. */
   protected readonly acoes = computed(() => {
     const contrato = this.contrato();
     return contrato ? ACOES_CONTRATO.filter((acao) => contrato._links[acao.rel]) : [];
@@ -71,7 +71,7 @@ export class ContratoDetalheComponent implements OnInit {
     });
   }
 
-  /** PATCH no href do link da ação. A resposta é o contrato com o novo status e os novos links. */
+  /** PATCH no href do link da acao. a resposta e o contrato com o novo status e os novos links. */
   executar(acao: (typeof ACOES_CONTRATO)[number]): void {
     const contrato = this.contrato();
     if (!contrato || !confirm(`${acao.rotulo} o contrato ${contrato.numero}?`)) return;
@@ -98,7 +98,7 @@ export class ContratoDetalheComponent implements OnInit {
         this.toast.sucesso(`Contrato ${contrato.numero} excluído`);
         this.router.navigate(['/contratos']);
       },
-      // 409 se tiver faturas/chamados/OS: a API sugere usar a ação de cancelar
+      // 409 se tiver faturas/chamados/OS: a API sugere usar a acao de cancelar
       error: (erro: HttpErrorResponse) => this.toast.erroDaApi(erro),
     });
   }

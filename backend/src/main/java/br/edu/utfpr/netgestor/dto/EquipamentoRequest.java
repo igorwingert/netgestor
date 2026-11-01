@@ -7,8 +7,8 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 /**
- * Dados técnicos do equipamento. O status e o contrato (comodato) não entram aqui:
- * são controlados pelas ações vincular/desvincular.
+ * dados tecnicos do equipamento. o status e o contrato (comodato) nao entram aqui:
+ * sao controlados pelas acoes vincular/desvincular.
  */
 public record EquipamentoRequest(
         @NotNull(message = "O tipo é obrigatório (ONU ou ROTEADOR)")
@@ -30,7 +30,7 @@ public record EquipamentoRequest(
         @Pattern(regexp = "^([0-9A-F]{2}:){5}[0-9A-F]{2}$", message = "MAC inválido (formato AA:BB:CC:DD:EE:FF)")
         String mac) {
 
-    /** Aceita MAC em minúsculas ou separado por hífen: aa-bb-cc-dd-ee-ff vira AA:BB:CC:DD:EE:FF. */
+    /** aceita MAC em minusculas ou separado por hifen: aa-bb-cc-dd-ee-ff vira AA:BB:CC:DD:EE:FF. */
     public EquipamentoRequest {
         if (mac != null) {
             mac = mac.trim().toUpperCase().replace('-', ':');

@@ -16,7 +16,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-/** ONU ou roteador. Fica em estoque ou instalado em comodato num contrato. */
+/** ONU ou roteador. fica em estoque ou instalado em comodato num contrato. */
 @Entity
 @Table(name = "equipamento")
 @Getter
@@ -37,13 +37,13 @@ public class Equipamento {
 
     private String numeroSerie;
 
-    /** Endereço MAC no formato AA:BB:CC:DD:EE:FF. */
+    /** endereco MAC no formato AA:BB:CC:DD:EE:FF. */
     private String mac;
 
     @Enumerated(EnumType.STRING)
     private StatusEquipamento status = StatusEquipamento.ESTOQUE;
 
-    /** Contrato onde o equipamento está instalado (vazio quando em estoque). */
+    /** Contrato onde o equipamento esta instalado (vazio quando em estoque). */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "contrato_id")
     private Contrato contrato;

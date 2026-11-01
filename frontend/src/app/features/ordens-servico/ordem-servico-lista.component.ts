@@ -17,11 +17,11 @@ const ACOES_OS = [
 ];
 
 /**
- * Ordens de serviço.
- * - TECNICO: vê a própria agenda ("Minhas ordens de serviço") e inicia/conclui pelos links.
- * - ADMIN/ATENDENTE: veem todas, com filtro por técnico.
- * Os links já chegam filtrados pela API conforme o perfil (o técnico recebe iniciar/concluir,
- * a atendente recebe cancelar), então a tela apenas exibe o que veio.
+ * ordens de servico.
+ * - TECNICO: ve a propria agenda ("Minhas ordens de serviço") e inicia/conclui pelos links.
+ * - ADMIN/ATENDENTE: veem todas, com filtro por tecnico.
+ * os links ja chegam filtrados pela API conforme o perfil (o tecnico recebe iniciar/concluir,
+ * a atendente recebe cancelar), entao a tela apenas exibe o que veio.
  */
 @Component({
   selector: 'app-ordem-servico-lista',
@@ -51,7 +51,7 @@ export class OrdemServicoListaComponent implements OnInit {
       next: (tecnicos) => {
         this.tecnicos.set(tecnicos);
         if (this.ehTecnico()) {
-          // O técnico logado é o Tecnico cujo usuário é o dono do token
+          // o tecnico logado e o Tecnico cujo usuario e o dono do token
           const meuCadastro = tecnicos.find((t) => t.usuarioId === this.auth.usuario()?.id);
           this.filtros.controls.tecnicoId.setValue(meuCadastro?.id ?? null);
         }

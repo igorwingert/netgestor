@@ -8,7 +8,7 @@ export interface Toast {
   mensagem: string;
 }
 
-/** Mensagens rápidas (toasts) de sucesso e erro, exibidas pelo ToastsComponent. */
+/** mensagens rapidas (toasts) de sucesso e erro, exibidas pelo ToastsComponent. */
 @Injectable({ providedIn: 'root' })
 export class ToastService {
   private proximoId = 1;
@@ -22,7 +22,7 @@ export class ToastService {
     this.mostrar('erro', mensagem);
   }
 
-  /** Mostra a "mensagem" que veio da API. O 401 é ignorado: o interceptor já trata. */
+  /** mostra a "mensagem" que veio da API. o 401 e ignorado: o interceptor ja trata. */
   erroDaApi(erro: HttpErrorResponse): void {
     if (erro.status !== 401) {
       this.mostrar('erro', mensagemDeErro(erro));

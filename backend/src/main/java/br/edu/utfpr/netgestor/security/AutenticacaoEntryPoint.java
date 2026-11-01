@@ -18,10 +18,10 @@ import java.util.List;
 
 /**
  * 401 Unauthorized: chamado pelo Spring Security quando uma rota protegida
- * é acessada sem token válido. Devolve o mesmo JSON de erro do resto da API.
+ * e acessada sem token valido. devolve o mesmo JSON de erro do resto da API.
  *
- * (O @RestControllerAdvice não serve aqui: o bloqueio acontece no filtro,
- * antes de a requisição chegar a qualquer controller.)
+ * (o @RestControllerAdvice nao serve aqui: o bloqueio acontece no filtro,
+ * antes de a requisicao chegar a qualquer controller.)
  */
 @Component
 @RequiredArgsConstructor
@@ -32,7 +32,7 @@ public class AutenticacaoEntryPoint implements AuthenticationEntryPoint {
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response,
                          AuthenticationException excecao) throws IOException {
-        // O JwtAuthFilter guarda o motivo quando o token existe mas é inválido/expirado
+        // o JwtAuthFilter guarda o motivo quando o token existe mas e invalido/expirado
         Object motivo = request.getAttribute(JwtAuthFilter.ATRIBUTO_ERRO);
         String mensagem = motivo != null
                 ? motivo.toString()

@@ -1,8 +1,8 @@
 import { HttpParams } from '@angular/common/http';
 
 /**
- * Monta os parâmetros de consulta (?status=ATIVO&clienteId=1) ignorando os filtros vazios.
- * Filtro vazio = a API não filtra por aquele campo.
+ * monta os parametros de consulta (?status=ATIVO&clienteId=1) ignorando os filtros vazios.
+ * filtro vazio = a API nao filtra por aquele campo.
  */
 export function criarParametros(filtros: Record<string, string | number | null | undefined>): HttpParams {
   let parametros = new HttpParams();

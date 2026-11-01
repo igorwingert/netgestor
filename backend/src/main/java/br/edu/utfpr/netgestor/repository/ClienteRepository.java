@@ -16,7 +16,7 @@ public interface ClienteRepository extends JpaRepository<Cliente, Long> {
 
     /**
      * GET /api/clientes?nome=&cpfCnpj=
-     * Busca parcial e sem diferenciar maiúsculas. O service troca filtro nulo por "",
+     * busca parcial e sem diferenciar maiusculas. o service troca filtro nulo por "",
      * e LIKE '%%' aceita qualquer valor (ou seja, "sem filtro").
      */
     @Query("""

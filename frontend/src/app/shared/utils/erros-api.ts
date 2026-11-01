@@ -2,7 +2,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { ErroApi } from '../../core/models/erro-api.model';
 
-/** Texto para o usuário: a "mensagem" da API ou um aviso de API fora do ar. */
+/** texto para o usuario: a "mensagem" da API ou um aviso de API fora do ar. */
 export function mensagemDeErro(erro: HttpErrorResponse): string {
   if (erro.status === 0) {
     return 'Não foi possível conectar à API. Verifique se o backend está rodando.';
@@ -12,8 +12,8 @@ export function mensagemDeErro(erro: HttpErrorResponse): string {
 }
 
 /**
- * Erro 400 da API: { "campos": [ { "campo": "cpfCnpj", "mensagem": "CPF inválido..." } ] }.
- * Coloca cada mensagem no controle de mesmo nome do formulário, para aparecer embaixo do campo.
+ * erro 400 da API: { "campos": [ { "campo": "cpfCnpj", "mensagem": "CPF inválido..." } ] }.
+ * coloca cada mensagem no controle de mesmo nome do formulario, para aparecer embaixo do campo.
  */
 export function aplicarErrosNoFormulario(form: FormGroup, erro: HttpErrorResponse): void {
   const campos = (erro.error as ErroApi | null)?.campos ?? [];
@@ -26,7 +26,7 @@ export function aplicarErrosNoFormulario(form: FormGroup, erro: HttpErrorRespons
   }
 }
 
-/** Mensagem a exibir embaixo de um campo (validação local ou da API), ou null se estiver tudo certo. */
+/** mensagem a exibir embaixo de um campo (validacao local ou da API), ou null se estiver tudo certo. */
 export function mensagemDoCampo(controle: AbstractControl | null): string | null {
   if (!controle || !controle.touched || !controle.errors) {
     return null;

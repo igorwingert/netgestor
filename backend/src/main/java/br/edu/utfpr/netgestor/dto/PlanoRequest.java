@@ -30,6 +30,6 @@ public record PlanoRequest(
         @NotNull(message = "A tecnologia é obrigatória (FIBRA ou RADIO)")
         Tecnologia tecnologia,
 
-        /* opcional: se não for enviado, o plano fica ativo */
+        /* opcional: se nao for enviado, o plano fica ativo */
         Boolean ativo) {
 }

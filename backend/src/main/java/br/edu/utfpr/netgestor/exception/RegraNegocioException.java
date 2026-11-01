@@ -1,8 +1,8 @@
 package br.edu.utfpr.netgestor.exception;
 
 /**
- * Lançada quando a operação viola uma regra de negócio
- * (dado duplicado, exclusão com dependentes, porta da CTO ocupada...). Vira HTTP 409.
+ * lancada quando a operacao viola uma regra de negocio
+ * (dado duplicado, exclusao com dependentes, porta da CTO ocupada...). vira HTTP 409.
  */
 public class RegraNegocioException extends RuntimeException {
 

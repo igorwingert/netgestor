@@ -1,4 +1,4 @@
 /**
- * Configurações gerais da aplicação (CORS e beans compartilhados).
+ * configuracoes gerais da aplicacao (CORS e beans compartilhados).
  */
 package br.edu.utfpr.netgestor.config;

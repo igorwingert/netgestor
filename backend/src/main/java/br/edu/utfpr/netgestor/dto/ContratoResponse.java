@@ -7,8 +7,8 @@ import org.springframework.hateoas.server.core.Relation;
 import java.time.LocalDate;
 
 /**
- * Além dos ids, traz nomes "achatados" (clienteNome, planoNome...) para o frontend
- * exibir a listagem sem precisar de uma requisição extra por contrato.
+ * alem dos ids, traz nomes "achatados" (clienteNome, planoNome...) para o frontend
+ * exibir a listagem sem precisar de uma requisicao extra por contrato.
  */
 @Relation(collectionRelation = "contratos", itemRelation = "contrato")
 public record ContratoResponse(

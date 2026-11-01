@@ -1,7 +1,7 @@
-# Banco de dados do NetGestor (PostgreSQL 16).
-# Subir:  docker compose up -d
-# Parar:  docker compose down      (os dados ficam no volume)
-# Zerar:  docker compose down -v   (apaga o volume; o Flyway recria tudo na próxima subida)
+# banco de dados do NetGestor (PostgreSQL 16).
+# subir:  docker compose up -d
+# parar:  docker compose down      (os dados ficam no volume)
+# zerar:  docker compose down -v   (apaga o volume; o Flyway recria tudo na proxima subida)
 services:
   postgres:
     image: postgres:16-alpine

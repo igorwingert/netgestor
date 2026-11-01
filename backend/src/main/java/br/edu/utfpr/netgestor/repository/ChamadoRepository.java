@@ -16,7 +16,7 @@ public interface ChamadoRepository extends JpaRepository<Chamado, Long> {
 
     boolean existsByAbertoPorId(Long usuarioId);
 
-    /** Usado para gerar o próximo protocolo (ex.: CH-2026-000006). */
+    /** usado para gerar o proximo protocolo (ex.: CH-2026-000006). */
     long countByProtocoloStartingWith(String prefixo);
 
     /** GET /api/chamados?status=&prioridade=  e  GET /api/contratos/{id}/chamados (mais recentes primeiro) */

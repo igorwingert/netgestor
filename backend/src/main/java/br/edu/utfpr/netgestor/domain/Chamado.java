@@ -38,7 +38,7 @@ public class Chamado {
     @JoinColumn(name = "contrato_id")
     private Contrato contrato;
 
-    /** Usuário (atendente/admin) que registrou o chamado. */
+    /** usuario (atendente/admin) que registrou o chamado. */
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "aberto_por_id")
     private Usuario abertoPor;

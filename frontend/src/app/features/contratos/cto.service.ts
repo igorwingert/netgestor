@@ -5,7 +5,7 @@ import { API_URL } from '../../core/api.config';
 import { Cto, OcupacaoCto } from '../../core/models/contrato.model';
 import { Colecao, itensDaColecao } from '../../core/models/hal.model';
 
-/** CTOs e ocupação das portas: usados no formulário de contrato para escolher uma porta livre. */
+/** CTOs e ocupacao das portas: usados no formulario de contrato para escolher uma porta livre. */
 @Injectable({ providedIn: 'root' })
 export class CtoService {
   private readonly http = inject(HttpClient);

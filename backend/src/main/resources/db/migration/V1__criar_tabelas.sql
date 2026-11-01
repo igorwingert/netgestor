@@ -1,16 +1,16 @@
 -- =====================================================================
--- V1 - Estrutura inicial do banco do NetGestor
+-- V1 - estrutura inicial do banco do NetGestor
 --
--- Convenções:
+-- convencoes:
 --   * tabelas no singular e colunas em snake_case (o Spring converte
 --     automaticamente dataCadastro -> data_cadastro);
---   * chave primária BIGSERIAL (auto incremento) em todas as tabelas;
---   * enums gravados como texto (VARCHAR) + CHECK com os valores válidos;
+--   * chave primaria BIGSERIAL (auto incremento) em todas as tabelas;
+--   * enums gravados como texto (VARCHAR) + CHECK com os valores validos;
 --   * nomes das constraints: pk_, fk_, uk_ (unique) e ck_ (check).
 -- =====================================================================
 
 -- ---------------------------------------------------------------------
--- Usuários do sistema (login)
+-- usuarios do sistema (login)
 -- ---------------------------------------------------------------------
 CREATE TABLE usuario (
     id      BIGSERIAL    NOT NULL,
@@ -25,12 +25,12 @@ CREATE TABLE usuario (
 );
 
 -- ---------------------------------------------------------------------
--- Clientes e endereços
+-- clientes e enderecos
 -- ---------------------------------------------------------------------
 CREATE TABLE cliente (
     id             BIGSERIAL    NOT NULL,
     nome           VARCHAR(150) NOT NULL,
-    cpf_cnpj       VARCHAR(14)  NOT NULL,       -- somente dígitos
+    cpf_cnpj       VARCHAR(14)  NOT NULL,       -- somente digitos
     tipo_pessoa    VARCHAR(10)  NOT NULL,
     email          VARCHAR(150) NOT NULL,
     telefone       VARCHAR(20)  NOT NULL,
@@ -40,7 +40,7 @@ CREATE TABLE cliente (
     CONSTRAINT uk_cliente_cpf_cnpj UNIQUE (cpf_cnpj),
     CONSTRAINT uk_cliente_email UNIQUE (email),
     CONSTRAINT ck_cliente_tipo_pessoa CHECK (tipo_pessoa IN ('FISICA', 'JURIDICA')),
-    -- pessoa física tem CPF (11 dígitos); jurídica tem CNPJ (14 dígitos)
+    -- pessoa fisica tem CPF (11 digitos); juridica tem CNPJ (14 digitos)
     CONSTRAINT ck_cliente_documento CHECK (
         (tipo_pessoa = 'FISICA'   AND cpf_cnpj ~ '^[0-9]{11}$') OR
         (tipo_pessoa = 'JURIDICA' AND cpf_cnpj ~ '^[0-9]{14}$')
@@ -64,7 +64,7 @@ CREATE TABLE endereco (
 );
 
 -- ---------------------------------------------------------------------
--- Planos de internet
+-- planos de internet
 -- ---------------------------------------------------------------------
 CREATE TABLE plano (
     id             BIGSERIAL     NOT NULL,
@@ -83,7 +83,7 @@ CREATE TABLE plano (
 );
 
 -- ---------------------------------------------------------------------
--- Rede óptica: OLT (central) -> CTO (caixa na rua) -> cliente
+-- rede optica: OLT (central) -> CTO (caixa na rua) -> cliente
 -- ---------------------------------------------------------------------
 CREATE TABLE olt (
     id                BIGSERIAL    NOT NULL,
@@ -115,7 +115,7 @@ CREATE TABLE cto (
 );
 
 -- ---------------------------------------------------------------------
--- Contratos (cliente + plano + endereço de instalação + porta na CTO)
+-- contratos (cliente + plano + endereco de instalacao + porta na CTO)
 -- ---------------------------------------------------------------------
 CREATE TABLE contrato (
     id                      BIGSERIAL   NOT NULL,
@@ -123,7 +123,7 @@ CREATE TABLE contrato (
     cliente_id              BIGINT      NOT NULL,
     plano_id                BIGINT      NOT NULL,
     endereco_instalacao_id  BIGINT      NOT NULL,
-    cto_id                  BIGINT,                -- opcional (ex.: plano via rádio)
+    cto_id                  BIGINT,                -- opcional (ex.: plano via radio)
     porta_cto               INTEGER,
     data_inicio             DATE        NOT NULL,
     dia_vencimento          INTEGER     NOT NULL,
@@ -136,21 +136,21 @@ CREATE TABLE contrato (
     CONSTRAINT fk_contrato_cto FOREIGN KEY (cto_id) REFERENCES cto (id),
     CONSTRAINT ck_contrato_dia_vencimento CHECK (dia_vencimento BETWEEN 1 AND 28),
     CONSTRAINT ck_contrato_status CHECK (status IN ('ATIVO', 'SUSPENSO', 'CANCELADO')),
-    -- CTO e porta andam juntas: ou as duas são informadas, ou nenhuma
+    -- CTO e porta andam juntas: ou as duas sao informadas, ou nenhuma
     CONSTRAINT ck_contrato_cto_porta CHECK (
         (cto_id IS NULL AND porta_cto IS NULL) OR
         (cto_id IS NOT NULL AND porta_cto > 0)
     )
 );
 
--- Uma porta da CTO só pode ser usada por um contrato que não esteja cancelado.
--- (índice único parcial: contratos cancelados liberam a porta)
+-- uma porta da CTO so pode ser usada por um contrato que nao esteja cancelado.
+-- (indice unico parcial: contratos cancelados liberam a porta)
 CREATE UNIQUE INDEX uk_contrato_cto_porta_em_uso
     ON contrato (cto_id, porta_cto)
     WHERE status <> 'CANCELADO';
 
 -- ---------------------------------------------------------------------
--- Equipamentos (ONU / roteador), em estoque ou em comodato com um contrato
+-- equipamentos (ONU / roteador), em estoque ou em comodato com um contrato
 -- ---------------------------------------------------------------------
 CREATE TABLE equipamento (
     id             BIGSERIAL   NOT NULL,
@@ -168,12 +168,12 @@ CREATE TABLE equipamento (
     CONSTRAINT ck_equipamento_tipo CHECK (tipo IN ('ONU', 'ROTEADOR')),
     CONSTRAINT ck_equipamento_status CHECK (status IN ('ESTOQUE', 'INSTALADO', 'DEFEITO')),
     CONSTRAINT ck_equipamento_mac CHECK (mac ~ '^([0-9A-F]{2}:){5}[0-9A-F]{2}$'),
-    -- está INSTALADO se, e somente se, estiver vinculado a um contrato
+    -- esta INSTALADO se, e somente se, estiver vinculado a um contrato
     CONSTRAINT ck_equipamento_vinculo CHECK ((status = 'INSTALADO') = (contrato_id IS NOT NULL))
 );
 
 -- ---------------------------------------------------------------------
--- Técnicos (cada técnico tem exatamente um usuário de login: 1:1)
+-- tecnicos (cada tecnico tem exatamente um usuario de login: 1:1)
 -- ---------------------------------------------------------------------
 CREATE TABLE tecnico (
     id             BIGSERIAL    NOT NULL,
@@ -187,7 +187,7 @@ CREATE TABLE tecnico (
 );
 
 -- ---------------------------------------------------------------------
--- Chamados (atendimento ao cliente)
+-- chamados (atendimento ao cliente)
 -- ---------------------------------------------------------------------
 CREATE TABLE chamado (
     id               BIGSERIAL     NOT NULL,
@@ -207,19 +207,19 @@ CREATE TABLE chamado (
     CONSTRAINT ck_chamado_tipo CHECK (tipo IN ('SEM_CONEXAO', 'LENTIDAO', 'FINANCEIRO', 'OUTRO')),
     CONSTRAINT ck_chamado_prioridade CHECK (prioridade IN ('BAIXA', 'MEDIA', 'ALTA', 'CRITICA')),
     CONSTRAINT ck_chamado_status CHECK (status IN ('ABERTO', 'EM_ATENDIMENTO', 'RESOLVIDO', 'FECHADO')),
-    -- chamado FECHADO precisa da data de fechamento, e ela não pode ser antes da abertura
+    -- chamado FECHADO precisa da data de fechamento, e ela nao pode ser antes da abertura
     CONSTRAINT ck_chamado_fechamento CHECK (status <> 'FECHADO' OR data_fechamento IS NOT NULL),
     CONSTRAINT ck_chamado_datas CHECK (data_fechamento IS NULL OR data_fechamento >= data_abertura)
 );
 
 -- ---------------------------------------------------------------------
--- Ordens de serviço (trabalho de campo do técnico)
+-- ordens de servico (trabalho de campo do tecnico)
 -- ---------------------------------------------------------------------
 CREATE TABLE ordem_servico (
     id              BIGSERIAL     NOT NULL,
     numero          VARCHAR(20)   NOT NULL,
     contrato_id     BIGINT        NOT NULL,
-    chamado_id      BIGINT,                         -- opcional: OS de instalação não nasce de chamado
+    chamado_id      BIGINT,                         -- opcional: OS de instalacao nao nasce de chamado
     tecnico_id      BIGINT        NOT NULL,
     tipo            VARCHAR(20)   NOT NULL,
     status          VARCHAR(20)   NOT NULL DEFAULT 'AGENDADA',
@@ -236,7 +236,7 @@ CREATE TABLE ordem_servico (
     CONSTRAINT ck_ordem_servico_conclusao CHECK (status <> 'CONCLUIDA' OR data_conclusao IS NOT NULL)
 );
 
--- Tabela de junção do relacionamento N:N entre ordem de serviço e equipamento
+-- tabela de juncao do relacionamento N:N entre ordem de servico e equipamento
 CREATE TABLE ordem_servico_equipamento (
     ordem_servico_id  BIGINT NOT NULL,
     equipamento_id    BIGINT NOT NULL,
@@ -246,18 +246,18 @@ CREATE TABLE ordem_servico_equipamento (
 );
 
 -- ---------------------------------------------------------------------
--- Financeiro: faturas mensais e seus pagamentos
+-- financeiro: faturas mensais e seus pagamentos
 -- ---------------------------------------------------------------------
 CREATE TABLE fatura (
     id               BIGSERIAL     NOT NULL,
     contrato_id      BIGINT        NOT NULL,
-    competencia      DATE          NOT NULL,       -- sempre o 1º dia do mês de referência
+    competencia      DATE          NOT NULL,       -- sempre o 1º dia do mes de referencia
     valor            NUMERIC(10,2) NOT NULL,
     data_vencimento  DATE          NOT NULL,
     status           VARCHAR(10)   NOT NULL DEFAULT 'ABERTA',
     CONSTRAINT pk_fatura PRIMARY KEY (id),
     CONSTRAINT fk_fatura_contrato FOREIGN KEY (contrato_id) REFERENCES contrato (id),
-    -- um contrato tem no máximo uma fatura por mês
+    -- um contrato tem no maximo uma fatura por mes
     CONSTRAINT uk_fatura_contrato_competencia UNIQUE (contrato_id, competencia),
     CONSTRAINT ck_fatura_competencia CHECK (EXTRACT(DAY FROM competencia) = 1),
     CONSTRAINT ck_fatura_valor CHECK (valor > 0),
@@ -277,8 +277,8 @@ CREATE TABLE pagamento (
 );
 
 -- ---------------------------------------------------------------------
--- Índices nas chaves estrangeiras mais consultadas.
--- O PostgreSQL cria índice automático para PK e UNIQUE, mas NÃO para FK.
+-- indices nas chaves estrangeiras mais consultadas.
+-- o PostgreSQL cria indice automatico para PK e UNIQUE, mas nao para FK.
 -- ---------------------------------------------------------------------
 CREATE INDEX ix_endereco_cliente      ON endereco (cliente_id);
 CREATE INDEX ix_contrato_cliente      ON contrato (cliente_id);

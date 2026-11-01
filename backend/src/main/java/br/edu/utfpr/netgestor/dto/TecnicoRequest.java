@@ -17,7 +17,7 @@ public record TecnicoRequest(
         @Size(max = 60, message = "A especialidade deve ter no máximo 60 caracteres")
         String especialidade,
 
-        /* usuário de login do técnico (perfil TECNICO), relacionamento 1:1 */
+        /* usuario de login do tecnico (perfil TECNICO), relacionamento 1:1 */
         @NotNull(message = "O usuário é obrigatório")
         Long usuarioId) {
 }

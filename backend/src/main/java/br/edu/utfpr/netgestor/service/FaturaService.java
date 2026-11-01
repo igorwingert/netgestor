@@ -24,7 +24,7 @@ public class FaturaService {
     private final FaturaRepository faturaRepository;
     private final ContratoService contratoService;
 
-    /** Filtros opcionais: status, competência (mês, ex.: 2026-10) e contratoId (null = sem filtro). */
+    /** filtros opcionais: status, competencia (mes, ex.: 2026-10) e contratoId (null = sem filtro). */
     @Transactional(readOnly = true)
     public List<FaturaResponse> listar(StatusFatura status, YearMonth competencia, Long contratoId) {
         LocalDate primeiroDia = competencia == null ? null : competencia.atDay(1);
@@ -33,10 +33,10 @@ public class FaturaService {
                 .toList();
     }
 
-    /** Sub-recurso GET /api/contratos/{contratoId}/faturas. */
+    /** sub-recurso GET /api/contratos/{contratoId}/faturas. */
     @Transactional(readOnly = true)
     public List<FaturaResponse> listarPorContrato(Long contratoId) {
-        contratoService.buscarEntidade(contratoId); // 404 se o contrato não existir
+        contratoService.buscarEntidade(contratoId); // 404 se o contrato nao existir
         return listar(null, null, contratoId);
     }
 
@@ -68,7 +68,7 @@ public class FaturaService {
         return FaturaResponse.de(fatura);
     }
 
-    /** Ação PATCH /api/faturas/{id}/cancelar: só fatura em aberto (ABERTA ou VENCIDA). */
+    /** acao PATCH /api/faturas/{id}/cancelar: so fatura em aberto (ABERTA ou VENCIDA). */
     @Transactional
     public FaturaResponse cancelar(Long id) {
         Fatura fatura = buscarEntidade(id);
@@ -97,7 +97,7 @@ public class FaturaService {
                     + " está cancelado e não pode ser faturado");
         }
 
-        // A competência é guardada como o 1º dia do mês (ex.: 2026-11 -> 2026-11-01)
+        // a competencia e guardada como o 1º dia do mes (ex.: 2026-11 -> 2026-11-01)
         LocalDate competencia = request.competencia().atDay(1);
         faturaRepository.findByContratoIdAndCompetencia(contrato.getId(), competencia)
                 .filter(outra -> !outra.getId().equals(fatura.getId()))
@@ -108,7 +108,7 @@ public class FaturaService {
 
         fatura.setContrato(contrato);
         fatura.setCompetencia(competencia);
-        // Valores padrão: mensalidade do plano e dia de vencimento do contrato
+        // valores padrao: mensalidade do plano e dia de vencimento do contrato
         fatura.setValor(request.valor() != null
                 ? request.valor()
                 : contrato.getPlano().getValorMensal());

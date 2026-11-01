@@ -24,7 +24,7 @@ public class ChamadoAssembler implements RepresentationModelAssembler<ChamadoRes
                 linkTo(methodOn(ContratoController.class).buscarPorId(chamado.contratoId())).withRel("contrato"),
                 linkTo(methodOn(UsuarioController.class).buscarPorId(chamado.abertoPorId())).withRel("abertoPor"));
 
-        // Ciclo de vida: ABERTO -> iniciar-atendimento -> resolver -> fechar
+        // ciclo de vida: ABERTO -> iniciar-atendimento -> resolver -> fechar
         if (chamado.status().podeIniciarAtendimento()) {
             model.add(linkTo(methodOn(ChamadoController.class).iniciarAtendimento(id)).withRel("iniciar-atendimento"));
         }

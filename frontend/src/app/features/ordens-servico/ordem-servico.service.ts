@@ -6,7 +6,7 @@ import { Colecao, itensDaColecao } from '../../core/models/hal.model';
 import { OrdemServico, StatusOrdemServico, Tecnico } from '../../core/models/ordem-servico.model';
 import { criarParametros } from '../../shared/utils/filtros';
 
-/** Comunicação com /api/ordens-servico e /api/tecnicos. As mudanças de status usam os links. */
+/** comunicacao com /api/ordens-servico e /api/tecnicos. as mudancas de status usam os links. */
 @Injectable({ providedIn: 'root' })
 export class OrdemServicoService {
   private readonly http = inject(HttpClient);

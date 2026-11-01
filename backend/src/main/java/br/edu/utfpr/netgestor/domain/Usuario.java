@@ -12,7 +12,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-/** Usuário que faz login no sistema (administrador, atendente ou técnico). */
+/** usuario que faz login no sistema (administrador, atendente ou tecnico). */
 @Entity
 @Table(name = "usuario")
 @Getter
@@ -28,7 +28,7 @@ public class Usuario {
 
     private String email;
 
-    /** Hash BCrypt da senha (nunca a senha em texto puro). */
+    /** hash BCrypt da senha (nunca a senha em texto puro). */
     private String senha;
 
     @Enumerated(EnumType.STRING)

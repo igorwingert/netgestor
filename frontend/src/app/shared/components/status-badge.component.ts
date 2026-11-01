@@ -1,6 +1,6 @@
 import { Component, computed, input } from '@angular/core';
 
-/** Cor do Bootstrap para cada status/prioridade que a API devolve. */
+/** cor do Bootstrap para cada status/prioridade que a API devolve. */
 const CORES: Record<string, string> = {
   ATIVO: 'success', SUSPENSO: 'warning', CANCELADO: 'secondary',
   ABERTO: 'primary', EM_ATENDIMENTO: 'info', RESOLVIDO: 'success', FECHADO: 'secondary',
@@ -10,7 +10,7 @@ const CORES: Record<string, string> = {
   INSTALADO: 'success', ESTOQUE: 'secondary', DEFEITO: 'danger',
 };
 
-/** Uso: <app-status-badge [status]="contrato.status" /> */
+/** uso: <app-status-badge [status]="contrato.status" /> */
 @Component({
   selector: 'app-status-badge',
   template: `<span class="badge" [class]="'badge text-bg-' + cor()">{{ texto() }}</span>`,

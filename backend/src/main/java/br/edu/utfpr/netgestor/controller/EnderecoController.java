@@ -23,10 +23,10 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * Endereço é um sub-recurso do cliente:
- *   GET  /api/clientes/{clienteId}/enderecos   lista os endereços do cliente
- *   POST /api/clientes/{clienteId}/enderecos   cadastra um endereço para o cliente
- * Depois de criado, cada endereço tem a sua própria URI:
+ * endereco e um sub-recurso do cliente:
+ *   GET  /api/clientes/{clienteId}/enderecos   lista os enderecos do cliente
+ *   POST /api/clientes/{clienteId}/enderecos   cadastra um endereco para o cliente
+ * depois de criado, cada endereco tem a sua propria URI:
  *   GET/PUT/DELETE /api/enderecos/{id}
  */
 @PreAuthorize("hasAnyRole('ADMIN', 'ATENDENTE')")
@@ -47,7 +47,7 @@ public class EnderecoController {
     public ResponseEntity<EntityModel<EnderecoResponse>> cadastrar(@PathVariable Long clienteId,
                                                                    @RequestBody @Valid EnderecoRequest request) {
         EntityModel<EnderecoResponse> model = enderecoAssembler.toModel(enderecoService.cadastrar(clienteId, request));
-        // O Location aponta para a URI própria do endereço (/api/enderecos/{id})
+        // o Location aponta para a URI propria do endereco (/api/enderecos/{id})
         return ResponseEntity.created(model.getRequiredLink(IanaLinkRelations.SELF).toUri()).body(model);
     }
 

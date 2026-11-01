@@ -19,7 +19,7 @@ export class PlanoListaComponent implements OnInit {
   private readonly auth = inject(AuthService);
 
   protected readonly planos = signal<Plano[]>([]);
-  /** ATENDENTE só consulta planos; os botões de cadastro/edição aparecem apenas para o ADMIN. */
+  /** ATENDENTE so consulta planos; os botoes de cadastro/edicao aparecem apenas para o ADMIN. */
   protected readonly podeEditar = computed(() => this.auth.temPerfil(SOMENTE_ADMIN));
 
   ngOnInit(): void {

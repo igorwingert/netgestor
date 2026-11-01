@@ -7,7 +7,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
-/** Dados de entrada do cliente. @DocumentoValido confere o CPF/CNPJ de acordo com o tipo de pessoa. */
+/** dados de entrada do cliente. @DocumentoValido confere o CPF/CNPJ de acordo com o tipo de pessoa. */
 @DocumentoValido
 public record ClienteRequest(
         @NotBlank(message = "O nome é obrigatório")
@@ -29,12 +29,12 @@ public record ClienteRequest(
         @Size(max = 20, message = "O telefone deve ter no máximo 20 caracteres")
         String telefone,
 
-        /* opcional: se não for enviado, o cliente fica ativo */
+        /* opcional: se nao for enviado, o cliente fica ativo */
         Boolean ativo) {
 
     /**
-     * Aceita CPF/CNPJ com ou sem máscara: guarda só letras maiúsculas e números
-     * (o CNPJ pode ser alfanumérico desde a V3; o CPF continua só com dígitos).
+     * aceita CPF/CNPJ com ou sem mascara: guarda so letras maiusculas e numeros
+     * (o CNPJ pode ser alfanumerico desde a V3; o CPF continua so com digitos).
      */
     public ClienteRequest {
         if (cpfCnpj != null) {

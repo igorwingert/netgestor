@@ -28,7 +28,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-/** Recurso /api/chamados, com filtros ?status=&prioridade= e as ações do ciclo de vida. */
+/** Recurso /api/chamados, com filtros ?status=&prioridade= e as acoes do ciclo de vida. */
 @PreAuthorize("hasAnyRole('ADMIN', 'ATENDENTE')")
 @RestController
 @RequestMapping("/api/chamados")
@@ -51,7 +51,7 @@ public class ChamadoController {
     }
 
     @PostMapping
-    /** Quem abre o chamado é o usuário dono do token (@AuthenticationPrincipal). */
+    /** quem abre o chamado e o usuario dono do token (@AuthenticationPrincipal). */
     public ResponseEntity<EntityModel<ChamadoResponse>> cadastrar(@RequestBody @Valid ChamadoRequest request,
                                                                   @AuthenticationPrincipal UsuarioLogado usuario) {
         EntityModel<ChamadoResponse> model = chamadoAssembler.toModel(chamadoService.cadastrar(request, usuario.getId()));

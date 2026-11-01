@@ -29,7 +29,7 @@ export interface ContratoRequest {
   diaVencimento: number;
 }
 
-/** CTO: caixa de terminação óptica, onde o contrato de fibra ocupa uma porta. */
+/** CTO: caixa de terminacao optica, onde o contrato de fibra ocupa uma porta. */
 export interface Cto extends Recurso {
   id: number;
   identificacao: string;
@@ -39,7 +39,7 @@ export interface Cto extends Recurso {
   capacidade: number;
 }
 
-/** Resposta de GET /api/ctos/{id}/ocupacao. */
+/** resposta de GET /api/ctos/{id}/ocupacao. */
 export interface OcupacaoCto {
   ctoId: number;
   identificacao: string;

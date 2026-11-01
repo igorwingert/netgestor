@@ -20,9 +20,9 @@ public class AutenticacaoService {
     private final UsuarioService usuarioService;
 
     /**
-     * O AuthenticationManager busca o usuário pelo e-mail (UsuarioDetailsService) e compara a senha
-     * informada com o hash BCrypt do banco. Se não conferir, lança BadCredentialsException,
-     * que o TratadorDeErros transforma em 401. Se conferir, geramos o token.
+     * o AuthenticationManager busca o usuario pelo e-mail (UsuarioDetailsService) e compara a senha
+     * informada com o hash BCrypt do banco. se nao conferir, lanca BadCredentialsException,
+     * que o TratadorDeErros transforma em 401. se conferir, geramos o token.
      */
     public LoginResponse login(LoginRequest request) {
         Authentication autenticacao = authenticationManager.authenticate(
@@ -34,7 +34,7 @@ public class AutenticacaoService {
                 usuarioService.buscarPorId(usuario.getId()));
     }
 
-    /** Dados do usuário dono do token (GET /api/auth/me). */
+    /** dados do usuario dono do token (GET /api/auth/me). */
     public UsuarioResponse usuarioAtual(UsuarioLogado usuario) {
         return usuarioService.buscarPorId(usuario.getId());
     }

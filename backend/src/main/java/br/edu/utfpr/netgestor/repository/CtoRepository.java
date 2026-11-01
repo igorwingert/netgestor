@@ -10,11 +10,11 @@ public interface CtoRepository extends JpaRepository<Cto, Long> {
 
     Optional<Cto> findByIdentificacaoIgnoreCase(String identificacao);
 
-    /** GET /api/olts/{id}/ctos (método derivado: o Spring gera o SQL pelo nome do método). */
+    /** GET /api/olts/{id}/ctos (metodo derivado: o Spring gera o SQL pelo nome do metodo). */
     List<Cto> findByOltIdOrderByIdentificacao(Long oltId);
 
     boolean existsByOltId(Long oltId);
 
-    /** Existe CTO ligada numa porta PON acima do total informado? (usado ao reduzir a OLT) */
+    /** existe CTO ligada numa porta PON acima do total informado? (usado ao reduzir a OLT) */
     boolean existsByOltIdAndPortaPonGreaterThan(Long oltId, Integer portaPon);
 }

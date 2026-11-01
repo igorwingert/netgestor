@@ -23,10 +23,10 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * Pagamento é um sub-recurso da fatura:
+ * Pagamento e um sub-recurso da fatura:
  *   GET  /api/faturas/{faturaId}/pagamentos
  *   POST /api/faturas/{faturaId}/pagamentos   (link "registrar-pagamento" da fatura)
- * e cada pagamento tem a sua URI própria: GET/PUT/DELETE /api/pagamentos/{id}
+ * e cada pagamento tem a sua URI propria: GET/PUT/DELETE /api/pagamentos/{id}
  */
 @PreAuthorize("hasAnyRole('ADMIN', 'ATENDENTE')")
 @RestController

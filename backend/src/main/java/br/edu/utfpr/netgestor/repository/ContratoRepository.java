@@ -20,21 +20,21 @@ public interface ContratoRepository extends JpaRepository<Contrato, Long> {
 
     boolean existsByEnderecoInstalacaoId(Long enderecoId);
 
-    /** Contrato (não cancelado) que ocupa a porta da CTO, se houver. */
+    /** Contrato (nao cancelado) que ocupa a porta da CTO, se houver. */
     Optional<Contrato> findByCtoIdAndPortaCtoAndStatusNot(Long ctoId, Integer portaCto, StatusContrato status);
 
-    /** Existe contrato (não cancelado) numa porta acima da capacidade informada? (usado ao reduzir a CTO) */
+    /** existe contrato (nao cancelado) numa porta acima da capacidade informada? (usado ao reduzir a CTO) */
     boolean existsByCtoIdAndPortaCtoGreaterThanAndStatusNot(Long ctoId, Integer portaCto, StatusContrato status);
 
-    /** Portas em uso numa CTO, para a consulta de ocupação. */
+    /** portas em uso numa CTO, para a consulta de ocupacao. */
     List<Contrato> findByCtoIdAndStatusNotOrderByPortaCto(Long ctoId, StatusContrato status);
 
-    /** Usado para gerar o próximo número (ex.: CT-2026-0003). */
+    /** usado para gerar o proximo numero (ex.: CT-2026-0003). */
     long countByNumeroStartingWith(String prefixo);
 
     /**
-     * GET /api/contratos?status=&clienteId=  (filtro nulo = não filtra por aquele campo)
-     * O @EntityGraph carrega cliente, plano, endereço e CTO no mesmo SELECT (JOIN),
+     * GET /api/contratos?status=&clienteId=  (filtro nulo = nao filtra por aquele campo)
+     * o @EntityGraph carrega cliente, plano, endereco e CTO no mesmo SELECT (JOIN),
      * evitando o problema "N+1" (uma consulta extra por contrato ao montar a resposta).
      */
     @EntityGraph(attributePaths = {"cliente", "plano", "enderecoInstalacao", "cto"})

@@ -7,7 +7,7 @@ import { ToastService } from '../../core/toast.service';
 import { aplicarErrosNoFormulario, mensagemDoCampo } from '../../shared/utils/erros-api';
 import { PlanoService } from './plano.service';
 
-/** Cadastro e edição de plano (rotas /planos/novo e /planos/:id, só ADMIN). */
+/** cadastro e edicao de plano (rotas /planos/novo e /planos/:id, so ADMIN). */
 @Component({
   selector: 'app-plano-form',
   imports: [ReactiveFormsModule, RouterLink],

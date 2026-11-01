@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 /**
- * Formato único de erro da API. Exemplo:
+ * formato unico de erro da API. exemplo:
  * <pre>
  * {
  *   "timestamp": "2026-10-26T22:00:00",
@@ -24,7 +24,7 @@ public record ErroResponse(
         String caminho,
         List<Campo> campos) {
 
-    /** Erro de validação de um campo específico (usado no 400). */
+    /** erro de validacao de um campo especifico (usado no 400). */
     public record Campo(String campo, String mensagem) {
     }
 }

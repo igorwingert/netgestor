@@ -23,7 +23,7 @@ export class ContratoListaComponent implements OnInit {
 
   protected readonly contratos = signal<Contrato[]>([]);
   protected readonly carregando = signal(false);
-  /** O TECNICO consulta contratos, mas não cadastra nem altera. */
+  /** o TECNICO consulta contratos, mas nao cadastra nem altera. */
   protected readonly podeGerenciar = computed(() => this.auth.temPerfil(ATENDIMENTO));
   protected readonly filtros = this.fb.group({ status: this.fb.control<StatusContrato | ''>('') });
   private consulta?: Subscription;

@@ -28,7 +28,7 @@ public class ChamadoService {
     private final ContratoService contratoService;
     private final UsuarioService usuarioService;
 
-    /** Filtros opcionais: status, prioridade e contratoId (null = sem filtro). */
+    /** filtros opcionais: status, prioridade e contratoId (null = sem filtro). */
     @Transactional(readOnly = true)
     public List<ChamadoResponse> listar(StatusChamado status, Prioridade prioridade, Long contratoId) {
         return chamadoRepository.buscar(status, prioridade, contratoId).stream()
@@ -36,10 +36,10 @@ public class ChamadoService {
                 .toList();
     }
 
-    /** Sub-recurso GET /api/contratos/{contratoId}/chamados. */
+    /** sub-recurso GET /api/contratos/{contratoId}/chamados. */
     @Transactional(readOnly = true)
     public List<ChamadoResponse> listarPorContrato(Long contratoId) {
-        contratoService.buscarEntidade(contratoId); // 404 se o contrato não existir
+        contratoService.buscarEntidade(contratoId); // 404 se o contrato nao existir
         return listar(null, null, contratoId);
     }
 
@@ -53,7 +53,7 @@ public class ChamadoService {
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Chamado " + id + " não encontrado"));
     }
 
-    /** abertoPorId = id do usuário logado (vem do token, via controller). */
+    /** abertoPorId = id do usuario logado (vem do token, via controller). */
     @Transactional
     public ChamadoResponse cadastrar(ChamadoRequest request, Long abertoPorId) {
         Chamado chamado = new Chamado();
@@ -63,7 +63,7 @@ public class ChamadoService {
         return ChamadoResponse.de(chamadoRepository.save(chamado));
     }
 
-    /** Atualiza contrato, tipo, prioridade e descrição. Quem abriu o chamado não muda. */
+    /** atualiza contrato, tipo, prioridade e descricao. quem abriu o chamado nao muda. */
     @Transactional
     public ChamadoResponse atualizar(Long id, ChamadoRequest request) {
         Chamado chamado = buscarEntidade(id);
@@ -86,7 +86,7 @@ public class ChamadoService {
     }
 
     // ---------------------------------------------------------------------
-    // Ações: ABERTO -> iniciar-atendimento -> EM_ATENDIMENTO -> resolver -> RESOLVIDO -> fechar -> FECHADO
+    // acoes: ABERTO -> iniciar-atendimento -> EM_ATENDIMENTO -> resolver -> RESOLVIDO -> fechar -> FECHADO
     // ---------------------------------------------------------------------
 
     @Transactional
@@ -105,7 +105,7 @@ public class ChamadoService {
         return ChamadoResponse.de(chamado);
     }
 
-    /** Ao fechar, registra a data/hora de fechamento. */
+    /** ao fechar, registra a data/hora de fechamento. */
     @Transactional
     public ChamadoResponse fechar(Long id) {
         Chamado chamado = buscarEntidade(id);
@@ -134,7 +134,7 @@ public class ChamadoService {
         chamado.setDescricao(request.descricao());
     }
 
-    /** Gera o próximo protocolo do ano: CH-2026-000001, CH-2026-000002... */
+    /** gera o proximo protocolo do ano: CH-2026-000001, CH-2026-000002... */
     private String gerarProtocolo() {
         String prefixo = "CH-" + Year.now() + "-";
         long sequencia = chamadoRepository.countByProtocoloStartingWith(prefixo) + 1;

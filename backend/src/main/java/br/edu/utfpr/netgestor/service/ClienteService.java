@@ -14,26 +14,26 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 /**
- * Regras de negócio de clientes.
+ * regras de negocio de clientes.
  *
- * Padrão seguido por todos os services do projeto:
- * - recebem/devolvem DTOs; as entidades ficam "dentro" da camada de serviço;
- * - a conversão entidade -> DTO acontece dentro da transação, enquanto ainda é
- *   possível carregar os relacionamentos LAZY;
- * - violações de regra lançam RegraNegocioException (409) e ids inexistentes
- *   lançam RecursoNaoEncontradoException (404).
+ * padrao seguido por todos os services do projeto:
+ * - recebem/devolvem DTOs; as entidades ficam "dentro" da camada de servico;
+ * - a conversao entidade -> DTO acontece dentro da transacao, enquanto ainda e
+ *   possivel carregar os relacionamentos LAZY;
+ * - violacoes de regra lancam RegraNegocioException (409) e ids inexistentes
+ *   lancam RecursoNaoEncontradoException (404).
  */
 @Service
-@RequiredArgsConstructor // Lombok gera o construtor: o Spring injeta as dependências por ele
+@RequiredArgsConstructor // Lombok gera o construtor: o Spring injeta as dependencias por ele
 public class ClienteService {
 
     private final ClienteRepository clienteRepository;
     private final ContratoRepository contratoRepository;
 
-    /** Filtros opcionais: nome (parte do nome) e cpfCnpj (parte do documento, com ou sem máscara). */
+    /** filtros opcionais: nome (parte do nome) e cpfCnpj (parte do documento, com ou sem mascara). */
     @Transactional(readOnly = true)
     public List<ClienteResponse> listar(String nome, String cpfCnpj) {
-        // Filtro não informado vira "": na consulta, LIKE '%%' aceita qualquer valor
+        // filtro nao informado vira "": na consulta, LIKE '%%' aceita qualquer valor
         String filtroNome = nome == null ? "" : nome.trim();
         String filtroDocumento = cpfCnpj == null ? "" : cpfCnpj.toUpperCase().replaceAll("[^0-9A-Z]", "");
         return clienteRepository.buscar(filtroNome, filtroDocumento).stream()
@@ -46,7 +46,7 @@ public class ClienteService {
         return ClienteResponse.de(buscarEntidade(id));
     }
 
-    /** Usado também por outros services que precisam da entidade Cliente. */
+    /** usado tambem por outros services que precisam da entidade Cliente. */
     public Cliente buscarEntidade(Long id) {
         return clienteRepository.findById(id)
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Cliente " + id + " não encontrado"));
@@ -63,8 +63,8 @@ public class ClienteService {
     public ClienteResponse atualizar(Long id, ClienteRequest request) {
         Cliente cliente = buscarEntidade(id);
         copiarDados(request, cliente);
-        // Não é preciso chamar save(): a entidade foi carregada nesta transação e o JPA
-        // grava as alterações automaticamente no commit ("dirty checking").
+        // nao e preciso chamar save(): a entidade foi carregada nesta transacao e o JPA
+        // grava as alteracoes automaticamente no commit ("dirty checking").
         return ClienteResponse.de(cliente);
     }
 
@@ -75,13 +75,13 @@ public class ClienteService {
             throw new RegraNegocioException("O cliente " + cliente.getNome()
                     + " possui contratos e não pode ser excluído. Desative-o (ativo = false).");
         }
-        // Os endereços são excluídos junto (cascade ALL em Cliente.enderecos)
+        // os enderecos sao excluidos junto (cascade ALL em Cliente.enderecos)
         clienteRepository.delete(cliente);
     }
 
-    /** Usado no cadastro e na atualização. No cadastro, cliente.getId() ainda é null. */
+    /** usado no cadastro e na atualizacao. no cadastro, cliente.getId() ainda e null. */
     private void copiarDados(ClienteRequest request, Cliente cliente) {
-        // CPF/CNPJ e e-mail não podem pertencer a OUTRO cliente
+        // CPF/CNPJ e e-mail nao podem pertencer a OUTRO cliente
         clienteRepository.findByCpfCnpj(request.cpfCnpj())
                 .filter(outro -> !outro.getId().equals(cliente.getId()))
                 .ifPresent(outro -> {

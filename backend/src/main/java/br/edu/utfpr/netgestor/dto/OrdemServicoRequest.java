@@ -7,7 +7,7 @@ import jakarta.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.util.Set;
 
-/** Dados de entrada da OS. O número é gerado pelo sistema e o status começa AGENDADA. */
+/** dados de entrada da OS. o numero e gerado pelo sistema e o status comeca AGENDADA. */
 public record OrdemServicoRequest(
         @NotNull(message = "O contrato é obrigatório")
         Long contratoId,

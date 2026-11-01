@@ -11,11 +11,11 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * O usuário autenticado, no formato que o Spring Security entende (UserDetails).
+ * o usuario autenticado, no formato que o Spring Security entende (UserDetails).
  *
- * É uma cópia dos dados da entidade Usuario: assim a entidade JPA não fica
- * guardada no contexto de segurança, fora de uma transação.
- * Nos controllers, é obtido com @AuthenticationPrincipal UsuarioLogado usuario.
+ * e uma copia dos dados da entidade Usuario: assim a entidade JPA nao fica
+ * guardada no contexto de seguranca, fora de uma transacao.
+ * nos controllers, e obtido com @AuthenticationPrincipal UsuarioLogado usuario.
  */
 @Getter
 public class UsuarioLogado implements UserDetails {
@@ -37,8 +37,8 @@ public class UsuarioLogado implements UserDetails {
     }
 
     /**
-     * O perfil vira uma "authority" com o prefixo ROLE_ (ex.: ROLE_ADMIN).
-     * É o que o @PreAuthorize("hasRole('ADMIN')") confere.
+     * o perfil vira uma "authority" com o prefixo ROLE_ (ex.: ROLE_ADMIN).
+     * e o que o @PreAuthorize("hasRole('ADMIN')") confere.
      */
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -50,13 +50,13 @@ public class UsuarioLogado implements UserDetails {
         return senha;
     }
 
-    /** No NetGestor o "username" do login é o e-mail. */
+    /** no NetGestor o "username" do login e o e-mail. */
     @Override
     public String getUsername() {
         return email;
     }
 
-    /** Usuário desativado (ativo = false) não consegue fazer login nem usar tokens antigos. */
+    /** usuario desativado (ativo = false) nao consegue fazer login nem usar tokens antigos. */
     @Override
     public boolean isEnabled() {
         return ativo;

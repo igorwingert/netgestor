@@ -5,7 +5,7 @@ import { API_URL } from '../../core/api.config';
 import { Colecao, itensDaColecao } from '../../core/models/hal.model';
 import { Plano, PlanoRequest } from '../../core/models/plano.model';
 
-/** Comunicação com o recurso /api/planos. */
+/** comunicacao com o recurso /api/planos. */
 @Injectable({ providedIn: 'root' })
 export class PlanoService {
   private readonly http = inject(HttpClient);

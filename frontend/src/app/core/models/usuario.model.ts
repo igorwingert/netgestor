@@ -8,7 +8,7 @@ export interface Usuario {
   ativo: boolean;
 }
 
-/** Resposta do POST /api/auth/login. */
+/** resposta do POST /api/auth/login. */
 export interface LoginResponse {
   token: string;
   tipo: string;

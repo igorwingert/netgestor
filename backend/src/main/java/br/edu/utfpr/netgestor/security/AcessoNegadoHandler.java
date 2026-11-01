@@ -17,9 +17,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 /**
- * 403 Forbidden no nível dos filtros: o usuário está autenticado, mas o perfil dele
- * não tem acesso. (Os 403 do @PreAuthorize, que acontecem já dentro do controller,
- * são tratados pelo TratadorDeErros com o mesmo formato.)
+ * 403 Forbidden no nivel dos filtros: o usuario esta autenticado, mas o perfil dele
+ * nao tem acesso. (os 403 do @PreAuthorize, que acontecem ja dentro do controller,
+ * sao tratados pelo TratadorDeErros com o mesmo formato.)
  */
 @Component
 @RequiredArgsConstructor

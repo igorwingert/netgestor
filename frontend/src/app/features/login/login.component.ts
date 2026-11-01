@@ -17,7 +17,7 @@ export class LoginComponent {
   private readonly toast = inject(ToastService);
   private readonly fb = inject(NonNullableFormBuilder);
 
-  /** Estado da tela em signals: com OnPush (padrão no Angular 22), a tela é redesenhada quando eles mudam. */
+  /** estado da tela em signals: com OnPush (padrao no Angular 22), a tela e redesenhada quando eles mudam. */
   protected readonly entrando = signal(false);
   protected readonly erroLogin = signal<string | null>(null);
 
@@ -26,7 +26,7 @@ export class LoginComponent {
     senha: ['', Validators.required],
   });
 
-  /** Usuários da migration V2, para facilitar a demonstração. */
+  /** usuarios da migration V2, para facilitar a demonstracao. */
   protected readonly usuariosDeTeste = [
     { perfil: 'ADMIN', email: 'admin@netgestor.com', senha: 'admin123' },
     { perfil: 'ATENDENTE', email: 'atendente@netgestor.com', senha: 'atendente123' },

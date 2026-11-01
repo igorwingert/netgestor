@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-/** Recurso /api/tecnicos e a agenda de cada técnico: /api/tecnicos/{id}/ordens-servico?status= */
+/** Recurso /api/tecnicos e a agenda de cada tecnico: /api/tecnicos/{id}/ordens-servico?status= */
 @RestController
 @RequestMapping("/api/tecnicos")
 @RequiredArgsConstructor

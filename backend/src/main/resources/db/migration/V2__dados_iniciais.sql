@@ -1,15 +1,15 @@
 -- =====================================================================
--- V2 - Dados iniciais para testes
+-- V2 - dados iniciais para testes
 --
--- Como o Flyway roda esta migration logo após a V1 (banco vazio), os ids
--- gerados pelo BIGSERIAL são previsíveis: 1, 2, 3... Os comentários
+-- como o Flyway roda esta migration logo apos a V1 (banco vazio), os ids
+-- gerados pelo BIGSERIAL sao previsiveis: 1, 2, 3... os comentarios
 -- "-- id N" ao lado de cada linha ajudam a ler as chaves estrangeiras.
 --
--- CPFs e CNPJs são fictícios, mas com dígitos verificadores válidos.
+-- CPFs e CNPJs sao ficticios, mas com digitos verificadores validos.
 -- =====================================================================
 
 -- ---------------------------------------------------------------------
--- Usuários. Hashes BCrypt gerados com BCryptPasswordEncoder (Spring Security):
+-- usuarios. hashes BCrypt gerados com BCryptPasswordEncoder (Spring Security):
 --   admin123 / atendente123 / tecnico123
 -- ---------------------------------------------------------------------
 INSERT INTO usuario (nome, email, senha, perfil, ativo) VALUES
@@ -19,7 +19,7 @@ INSERT INTO usuario (nome, email, senha, perfil, ativo) VALUES
     ('Marina Lopes',   'tecnico2@netgestor.com',  '$2a$10$T26q9jDERe5WMtYfDjTo1e7HajvaU.x6Esf4MbU7tHT0qQuJzakoi', 'TECNICO',   TRUE);  -- id 4 (senha tecnico123)
 
 -- ---------------------------------------------------------------------
--- Planos
+-- planos
 -- ---------------------------------------------------------------------
 INSERT INTO plano (nome, download_mbps, upload_mbps, valor_mensal, tecnologia, ativo) VALUES
     ('Fibra 300 Mega',  300,  150,  99.90, 'FIBRA', TRUE),   -- id 1
@@ -29,12 +29,12 @@ INSERT INTO plano (nome, download_mbps, upload_mbps, valor_mensal, tecnologia, a
     ('Fibra 100 Mega',  100,   50,  79.90, 'FIBRA', FALSE);  -- id 5 (plano antigo, fora de venda)
 
 -- ---------------------------------------------------------------------
--- Rede: OLTs e CTOs
+-- rede: OLTs e CTOs
 -- ---------------------------------------------------------------------
 INSERT INTO olt (nome, ip_gerencia, fabricante, localizacao, total_portas_pon) VALUES
     ('OLT-CENTRO', '10.10.0.1', 'Huawei',    'POP Centro - Rua XV de Novembro, Curitiba/PR', 16),  -- id 1
     ('OLT-NORTE',  '10.10.0.2', 'ZTE',       'POP Norte - Av. Paraná, Curitiba/PR',          16),  -- id 2
-    ('OLT-SUL',    '10.10.0.3', 'Fiberhome', 'POP Sul - em implantação',                      8);  -- id 3 (sem CTOs: pode ser excluída)
+    ('OLT-SUL',    '10.10.0.3', 'Fiberhome', 'POP Sul - em implantação',                      8);  -- id 3 (sem CTOs: pode ser excluida)
 
 INSERT INTO cto (identificacao, olt_id, porta_pon, capacidade, latitude, longitude) VALUES
     ('CTO-CEN-01', 1, 1,  8, -25.429596, -49.271272),  -- id 1
@@ -43,7 +43,7 @@ INSERT INTO cto (identificacao, olt_id, porta_pon, capacidade, latitude, longitu
     ('CTO-NOR-02', 2, 3, 16, -25.398700, -49.251400);  -- id 4 (sem clientes ainda)
 
 -- ---------------------------------------------------------------------
--- Clientes e endereços
+-- clientes e enderecos
 -- ---------------------------------------------------------------------
 INSERT INTO cliente (nome, cpf_cnpj, tipo_pessoa, email, telefone, data_cadastro, ativo) VALUES
     ('João da Silva',           '12345678909',    'FISICA',   'joao.silva@email.com',       '(41) 99911-1111', '2025-03-10', TRUE),  -- id 1
@@ -51,7 +51,7 @@ INSERT INTO cliente (nome, cpf_cnpj, tipo_pessoa, email, telefone, data_cadastro
     ('Pedro Santos',            '45612378955',    'FISICA',   'pedro.santos@email.com',     '(41) 99933-3333', '2026-01-15', TRUE),  -- id 3
     ('Ana Costa',               '32165498791',    'FISICA',   'ana.costa@email.com',        '(41) 99944-4444', '2026-09-05', TRUE),  -- id 4
     ('Padaria Pão Quente Ltda', '11222333000181', 'JURIDICA', 'contato@paoquente.com.br',   '(41) 3333-5555',  '2025-11-02', TRUE),  -- id 5
-    ('Tech Solutions ME',       '44555666000181', 'JURIDICA', 'financeiro@techsol.com.br',  '(41) 3333-6666',  '2026-10-20', TRUE);  -- id 6 (sem contratos: pode ser excluído)
+    ('Tech Solutions ME',       '44555666000181', 'JURIDICA', 'financeiro@techsol.com.br',  '(41) 3333-6666',  '2026-10-20', TRUE);  -- id 6 (sem contratos: pode ser excluido)
 
 INSERT INTO endereco (cep, logradouro, numero, complemento, bairro, cidade, uf, cliente_id) VALUES
     ('80020310', 'Rua XV de Novembro',      '1000', 'Apto 302',  'Centro',        'Curitiba', 'PR', 1),  -- id 1
@@ -63,20 +63,20 @@ INSERT INTO endereco (cep, logradouro, numero, complemento, bairro, cidade, uf, 
     ('82510000', 'Avenida Paraná',          '3000', 'Sala 10',   'Cabral',        'Curitiba', 'PR', 6);  -- id 7
 
 -- ---------------------------------------------------------------------
--- Contratos
+-- contratos
 -- ---------------------------------------------------------------------
 INSERT INTO contrato (numero, cliente_id, plano_id, endereco_instalacao_id, cto_id, porta_cto, data_inicio, dia_vencimento, status) VALUES
     ('CT-2025-0001', 1, 2, 1, 1,    1,    '2025-03-12', 10, 'ATIVO'),      -- id 1
     ('CT-2025-0002', 2, 1, 3, 1,    2,    '2025-06-25', 15, 'ATIVO'),      -- id 2
     ('CT-2025-0003', 5, 3, 6, 2,    1,    '2025-11-05',  5, 'ATIVO'),      -- id 3
     ('CT-2026-0001', 3, 1, 4, 3,    1,    '2026-01-20', 10, 'SUSPENSO'),   -- id 4 (inadimplente)
-    ('CT-2026-0002', 4, 4, 5, NULL, NULL, '2026-09-08', 20, 'ATIVO'),      -- id 5 (rádio: sem CTO)
+    ('CT-2026-0002', 4, 4, 5, NULL, NULL, '2026-09-08', 20, 'ATIVO'),      -- id 5 (radio: sem CTO)
     -- contrato antigo cancelado: usava a mesma porta 2 da CTO-CEN-01 que hoje
-    -- pertence ao contrato 2 (permitido pelo índice único parcial da V1)
+    -- pertence ao contrato 2 (permitido pelo indice unico parcial da V1)
     ('CT-2024-0001', 2, 5, 3, 1,    2,    '2024-02-01', 15, 'CANCELADO');  -- id 6
 
 -- ---------------------------------------------------------------------
--- Equipamentos (INSTALADO = em comodato com um contrato)
+-- equipamentos (INSTALADO = em comodato com um contrato)
 -- ---------------------------------------------------------------------
 INSERT INTO equipamento (tipo, fabricante, modelo, numero_serie, mac, status, contrato_id) VALUES
     ('ONU',      'Huawei',    'EG8145V5',     'HWTC1A2B3C01', '48:57:02:1A:2B:01', 'INSTALADO', 1),     -- id 1
@@ -93,14 +93,14 @@ INSERT INTO equipamento (tipo, fabricante, modelo, numero_serie, mac, status, co
     ('ONU',      'Huawei',    'EG8145V5',     'HWTC1A2B3C04', '48:57:02:1A:2B:04', 'ESTOQUE',   NULL);  -- id 12
 
 -- ---------------------------------------------------------------------
--- Técnicos (vinculados aos usuários de perfil TECNICO)
+-- tecnicos (vinculados aos usuarios de perfil TECNICO)
 -- ---------------------------------------------------------------------
 INSERT INTO tecnico (nome, telefone, especialidade, usuario_id) VALUES
     ('Carlos Souza', '(41) 99800-1001', 'Fibra óptica',    3),  -- id 1
     ('Marina Lopes', '(41) 99800-1002', 'Redes e rádio',   4);  -- id 2
 
 -- ---------------------------------------------------------------------
--- Chamados
+-- chamados
 -- ---------------------------------------------------------------------
 INSERT INTO chamado (protocolo, contrato_id, aberto_por_id, tipo, prioridade, status, descricao, data_abertura, data_fechamento) VALUES
     ('CH-2026-000001', 1, 2, 'LENTIDAO',    'MEDIA',   'FECHADO',
@@ -115,7 +115,7 @@ INSERT INTO chamado (protocolo, contrato_id, aberto_por_id, tipo, prioridade, st
         'Sinal do rádio instável após chuva forte.',                           '2026-10-26 07:50', NULL);                -- id 5
 
 -- ---------------------------------------------------------------------
--- Ordens de serviço e equipamentos utilizados (N:N)
+-- ordens de servico e equipamentos utilizados (N:N)
 -- ---------------------------------------------------------------------
 INSERT INTO ordem_servico (numero, contrato_id, chamado_id, tecnico_id, tipo, status, data_agendada, data_conclusao, observacoes) VALUES
     ('OS-2026-0001', 1, 1,    1, 'REPARO',           'CONCLUIDA',   '2026-09-03 14:00', '2026-09-03 16:30',
@@ -132,10 +132,10 @@ INSERT INTO ordem_servico (numero, contrato_id, chamado_id, tecnico_id, tipo, st
 INSERT INTO ordem_servico_equipamento (ordem_servico_id, equipamento_id) VALUES
     (1, 1),   -- OS 1 trabalhou na ONU do contrato 1
     (2, 7),   -- OS 2 instalou o roteador do contrato 5
-    (3, 4);   -- OS 3 está verificando a ONU do contrato 3
+    (3, 4);   -- OS 3 esta verificando a ONU do contrato 3
 
 -- ---------------------------------------------------------------------
--- Faturas (valor = mensalidade do plano; vencimento = dia do contrato)
+-- faturas (valor = mensalidade do plano; vencimento = dia do contrato)
 -- ---------------------------------------------------------------------
 INSERT INTO fatura (contrato_id, competencia, valor, data_vencimento, status) VALUES
     (1, '2026-08-01', 129.90, '2026-08-10', 'PAGA'),       -- id 1
@@ -157,7 +157,7 @@ INSERT INTO fatura (contrato_id, competencia, valor, data_vencimento, status) VA
     (6, '2024-03-01',  79.90, '2024-03-15', 'CANCELADA');  -- id 17
 
 -- ---------------------------------------------------------------------
--- Pagamentos
+-- pagamentos
 -- ---------------------------------------------------------------------
 INSERT INTO pagamento (fatura_id, data_pagamento, valor_pago, forma) VALUES
     (1,  '2026-08-09', 129.90, 'PIX'),

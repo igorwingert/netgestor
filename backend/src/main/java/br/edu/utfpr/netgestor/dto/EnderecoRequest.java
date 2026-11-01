@@ -4,7 +4,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
-/** Dados de entrada do endereço. O cliente vem da URL: POST /api/clientes/{clienteId}/enderecos. */
+/** dados de entrada do endereco. o cliente vem da URL: POST /api/clientes/{clienteId}/enderecos. */
 public record EnderecoRequest(
         @NotBlank(message = "O CEP é obrigatório")
         @Pattern(regexp = "\\d{8}", message = "O CEP deve ter 8 dígitos")
@@ -33,7 +33,7 @@ public record EnderecoRequest(
         @Pattern(regexp = "[A-Z]{2}", message = "A UF deve ter 2 letras (ex.: PR)")
         String uf) {
 
-    /** Aceita CEP com ou sem hífen e UF em minúsculas. */
+    /** aceita CEP com ou sem hifen e UF em minusculas. */
     public EnderecoRequest {
         if (cep != null) {
             cep = cep.replaceAll("\\D", "");

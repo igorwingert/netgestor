@@ -1,6 +1,6 @@
 package br.edu.utfpr.netgestor.domain.enums;
 
-/** Situação da OS: AGENDADA -> EM_EXECUCAO -> CONCLUIDA; pode ser CANCELADA antes de concluir. */
+/** situacao da OS: AGENDADA -> EM_EXECUCAO -> CONCLUIDA; pode ser CANCELADA antes de concluir. */
 public enum StatusOrdemServico {
     AGENDADA,
     EM_EXECUCAO,
@@ -19,7 +19,7 @@ public enum StatusOrdemServico {
         return this == AGENDADA || this == EM_EXECUCAO;
     }
 
-    /** OS concluída ou cancelada é histórico: não pode mais ser editada. */
+    /** OS concluida ou cancelada e historico: nao pode mais ser editada. */
     public boolean podeEditar() {
         return this == AGENDADA || this == EM_EXECUCAO;
     }

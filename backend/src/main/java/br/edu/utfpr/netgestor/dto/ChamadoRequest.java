@@ -7,8 +7,8 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 /**
- * Dados de entrada do chamado. O protocolo é gerado pelo sistema, o status começa ABERTO
- * e quem abre o chamado é o usuário logado (dono do token JWT), não um campo do corpo.
+ * dados de entrada do chamado. o protocolo e gerado pelo sistema, o status comeca ABERTO
+ * e quem abre o chamado e o usuario logado (dono do token JWT), nao um campo do corpo.
  */
 public record ChamadoRequest(
         @NotNull(message = "O contrato é obrigatório")

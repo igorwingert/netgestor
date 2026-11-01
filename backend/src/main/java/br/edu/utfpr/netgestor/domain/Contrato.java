@@ -17,7 +17,7 @@ import lombok.Setter;
 
 import java.time.LocalDate;
 
-/** Contrato de prestação de serviço: liga cliente, plano, endereço e porta da CTO. */
+/** Contrato de prestacao de servico: liga cliente, plano, endereco e porta da CTO. */
 @Entity
 @Table(name = "contrato")
 @Getter
@@ -43,7 +43,7 @@ public class Contrato {
     @JoinColumn(name = "endereco_instalacao_id")
     private Endereco enderecoInstalacao;
 
-    /** Opcional: contratos via rádio não usam CTO. */
+    /** opcional: contratos via radio nao usam CTO. */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cto_id")
     private Cto cto;

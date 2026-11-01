@@ -1,4 +1,4 @@
 /**
- * Records de entrada (Request) e saída (Response) da API. As entidades nunca saem direto no controller.
+ * records de entrada (Request) e saida (Response) da API. as entidades nunca saem direto no controller.
  */
 package br.edu.utfpr.netgestor.dto;

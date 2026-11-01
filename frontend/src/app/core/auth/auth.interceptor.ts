@@ -6,12 +6,12 @@ import { ToastService } from '../toast.service';
 import { AuthService } from './auth.service';
 
 /**
- * Interceptor: passa por TODAS as requisições feitas com o HttpClient.
+ * interceptor: passa por todas as requisicoes feitas com o HttpClient.
  *
- * 1. Na ida: se houver token, acrescenta o header "Authorization: Bearer <token>"
- *    (só para a nossa API, nunca para outros sites).
- * 2. Na volta: se a API responder 401 (token ausente, inválido ou expirado),
- *    faz logout e leva o usuário para a tela de login.
+ * 1. na ida: se houver token, acrescenta o header "Authorization: Bearer <token>"
+ *    (so para a nossa API, nunca para outros sites).
+ * 2. na volta: se a API responder 401 (token ausente, invalido ou expirado),
+ *    faz logout e leva o usuario para a tela de login.
  */
 export const authInterceptor: HttpInterceptorFn = (requisicao, proximo) => {
   const auth = inject(AuthService);

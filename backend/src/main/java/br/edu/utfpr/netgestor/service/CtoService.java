@@ -36,21 +36,21 @@ public class CtoService {
                 .toList();
     }
 
-    /** Sub-recurso GET /api/olts/{oltId}/ctos. */
+    /** sub-recurso GET /api/olts/{oltId}/ctos. */
     @Transactional(readOnly = true)
     public List<CtoResponse> listarPorOlt(Long oltId) {
-        oltService.buscarEntidade(oltId); // 404 se a OLT não existir
+        oltService.buscarEntidade(oltId); // 404 se a OLT nao existir
         return ctoRepository.findByOltIdOrderByIdentificacao(oltId).stream()
                 .map(CtoResponse::de)
                 .toList();
     }
 
-    /** GET /api/ctos/{id}/ocupacao: lista as portas de 1 até a capacidade, indicando quem ocupa cada uma. */
+    /** GET /api/ctos/{id}/ocupacao: lista as portas de 1 ate a capacidade, indicando quem ocupa cada uma. */
     @Transactional(readOnly = true)
     public OcupacaoCtoResponse ocupacao(Long id) {
         Cto cto = buscarEntidade(id);
 
-        // porta -> contrato que a ocupa (contratos cancelados não ocupam porta)
+        // porta -> contrato que a ocupa (contratos cancelados nao ocupam porta)
         Map<Integer, Contrato> ocupadas = new HashMap<>();
         for (Contrato contrato : contratoRepository.findByCtoIdAndStatusNotOrderByPortaCto(id, StatusContrato.CANCELADO)) {
             ocupadas.put(contrato.getPortaCto(), contrato);
@@ -88,7 +88,7 @@ public class CtoService {
     @Transactional
     public CtoResponse atualizar(Long id, CtoRequest request) {
         Cto cto = buscarEntidade(id);
-        // Não deixa reduzir a capacidade abaixo de uma porta que já tem cliente
+        // nao deixa reduzir a capacidade abaixo de uma porta que ja tem cliente
         if (contratoRepository.existsByCtoIdAndPortaCtoGreaterThanAndStatusNot(
                 id, request.capacidade(), StatusContrato.CANCELADO)) {
             throw new RegraNegocioException("Existem contratos em portas acima de "

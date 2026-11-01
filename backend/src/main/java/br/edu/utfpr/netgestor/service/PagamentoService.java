@@ -16,8 +16,8 @@ import java.time.LocalDate;
 import java.util.List;
 
 /**
- * Pagamentos são um sub-recurso da fatura: /api/faturas/{faturaId}/pagamentos.
- * Toda alteração de pagamento recalcula o status da fatura (regra em Fatura.atualizarStatus).
+ * pagamentos sao um sub-recurso da fatura: /api/faturas/{faturaId}/pagamentos.
+ * toda alteracao de pagamento recalcula o status da fatura (regra em Fatura.atualizarStatus).
  */
 @Service
 @RequiredArgsConstructor
@@ -28,7 +28,7 @@ public class PagamentoService {
 
     @Transactional(readOnly = true)
     public List<PagamentoResponse> listarPorFatura(Long faturaId) {
-        faturaService.buscarEntidade(faturaId); // 404 se a fatura não existir
+        faturaService.buscarEntidade(faturaId); // 404 se a fatura nao existir
         return pagamentoRepository.findByFaturaIdOrderByDataPagamento(faturaId).stream()
                 .map(PagamentoResponse::de)
                 .toList();
@@ -57,7 +57,7 @@ public class PagamentoService {
         copiarDados(request, pagamento);
         fatura.getPagamentos().add(pagamento);
 
-        // Se a soma dos pagamentos alcançou o valor da fatura, ela passa para PAGA
+        // se a soma dos pagamentos alcancou o valor da fatura, ela passa para PAGA
         fatura.atualizarStatus(LocalDate.now());
         return PagamentoResponse.de(pagamentoRepository.save(pagamento));
     }
@@ -78,7 +78,7 @@ public class PagamentoService {
         validarFaturaNaoCancelada(fatura);
         fatura.getPagamentos().remove(pagamento);
         pagamentoRepository.delete(pagamento);
-        // Sem esse pagamento a fatura pode voltar a ABERTA ou VENCIDA
+        // sem esse pagamento a fatura pode voltar a ABERTA ou VENCIDA
         fatura.atualizarStatus(LocalDate.now());
     }
 

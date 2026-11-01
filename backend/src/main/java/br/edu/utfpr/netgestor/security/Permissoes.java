@@ -7,9 +7,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import java.util.Arrays;
 
 /**
- * Consulta o perfil do usuário da requisição atual.
- * Usado pelos assemblers: um link de ação só aparece se o status permitir
- * E se o perfil do usuário puder executar a ação (ex.: TECNICO não vê "suspender").
+ * consulta o perfil do usuario da requisicao atual.
+ * usado pelos assemblers: um link de acao so aparece se o status permitir
+ * e se o perfil do usuario puder executar a acao (ex.: TECNICO nao ve "suspender").
  */
 public final class Permissoes {
 

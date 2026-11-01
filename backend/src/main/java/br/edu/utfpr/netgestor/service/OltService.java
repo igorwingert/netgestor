@@ -48,7 +48,7 @@ public class OltService {
     @Transactional
     public OltResponse atualizar(Long id, OltRequest request) {
         Olt olt = buscarEntidade(id);
-        // Não deixa reduzir o total de portas abaixo de uma porta PON que já tem CTO ligada
+        // nao deixa reduzir o total de portas abaixo de uma porta PON que ja tem CTO ligada
         if (ctoRepository.existsByOltIdAndPortaPonGreaterThan(id, request.totalPortasPon())) {
             throw new RegraNegocioException("Existem CTOs ligadas em portas PON acima de "
                     + request.totalPortasPon() + " nesta OLT");

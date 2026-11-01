@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-/** Recurso /api/equipamentos, com filtros ?status=&tipo= e as ações de comodato vincular/desvincular. */
+/** Recurso /api/equipamentos, com filtros ?status=&tipo= e as acoes de comodato vincular/desvincular. */
 @PreAuthorize("hasAnyRole('ADMIN', 'TECNICO')")
 @RestController
 @RequestMapping("/api/equipamentos")
@@ -67,7 +67,7 @@ public class EquipamentoController {
         equipamentoService.excluir(id);
     }
 
-    /** Corpo: { "contratoId": 7 } */
+    /** corpo: { "contratoId": 7 } */
     @PatchMapping("/{id}/vincular")
     public EntityModel<EquipamentoResponse> vincular(@PathVariable Long id,
                                                      @RequestBody @Valid VinculoEquipamentoRequest request) {

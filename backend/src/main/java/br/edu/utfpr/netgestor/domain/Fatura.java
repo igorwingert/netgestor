@@ -37,7 +37,7 @@ public class Fatura {
     @JoinColumn(name = "contrato_id")
     private Contrato contrato;
 
-    /** Mês de referência, sempre no 1º dia (ex.: 2026-10-01). */
+    /** mes de referencia, sempre no 1º dia (ex.: 2026-10-01). */
     private LocalDate competencia;
 
     private BigDecimal valor;
@@ -47,11 +47,11 @@ public class Fatura {
     @Enumerated(EnumType.STRING)
     private StatusFatura status = StatusFatura.ABERTA;
 
-    /* Lado inverso do 1:N com Pagamento (a FK fatura_id está na tabela pagamento). */
+    /* lado inverso do 1:N com Pagamento (a FK fatura_id esta na tabela pagamento). */
     @OneToMany(mappedBy = "fatura")
     private List<Pagamento> pagamentos = new ArrayList<>();
 
-    /** Soma de todos os pagamentos registrados (aceita pagamentos parciais). */
+    /** soma de todos os pagamentos registrados (aceita pagamentos parciais). */
     public BigDecimal totalPago() {
         return pagamentos.stream()
                 .map(Pagamento::getValorPago)
@@ -59,9 +59,9 @@ public class Fatura {
     }
 
     /**
-     * Regra de negócio: a fatura fica PAGA quando a soma dos pagamentos alcança o valor.
-     * Enquanto falta pagar, fica VENCIDA (se já passou do vencimento) ou ABERTA.
-     * Fatura CANCELADA não muda de status.
+     * regra de negocio: a fatura fica PAGA quando a soma dos pagamentos alcanca o valor.
+     * enquanto falta pagar, fica VENCIDA (se ja passou do vencimento) ou ABERTA.
+     * Fatura CANCELADA nao muda de status.
      */
     public void atualizarStatus(LocalDate hoje) {
         if (status == StatusFatura.CANCELADA) {

@@ -16,12 +16,12 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 /**
- * Configuração central de segurança.
+ * configuracao central de seguranca.
  *
- * Duas camadas de proteção:
- * 1. Aqui (filtros): toda rota /api exige token, exceto o login. Sem token -> 401.
- * 2. Nos controllers (@PreAuthorize): cada operação define quais perfis podem executá-la.
- *    Perfil sem permissão -> 403. Isso é ligado pelo @EnableMethodSecurity.
+ * duas camadas de protecao:
+ * 1. aqui (filtros): toda rota /api exige token, exceto o login. sem token -> 401.
+ * 2. nos controllers (@PreAuthorize): cada operacao define quais perfis podem executa-la.
+ *    Perfil sem permissao -> 403. isso e ligado pelo @EnableMethodSecurity.
  */
 @Configuration
 @EnableMethodSecurity
@@ -36,11 +36,11 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                // API REST sem sessão nem cookies: a proteção CSRF não se aplica
+                // API REST sem sessao nem cookies: a protecao CSRF nao se aplica
                 .csrf(csrf -> csrf.disable())
                 // usa o CorsConfigurationSource definido em config/CorsConfig
                 .cors(Customizer.withDefaults())
-                // STATELESS: o servidor não guarda sessão; cada requisição traz o próprio token
+                // STATELESS: o servidor nao guarda sessao; cada requisicao traz o proprio token
                 .sessionManagement(sessao -> sessao.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(rotas -> rotas
                         .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
@@ -50,21 +50,21 @@ public class SecurityConfig {
                 .exceptionHandling(erros -> erros
                         .authenticationEntryPoint(autenticacaoEntryPoint)
                         .accessDeniedHandler(acessoNegadoHandler))
-                // o filtro JWT roda antes do filtro padrão de login por usuário/senha
+                // o filtro JWT roda antes do filtro padrao de login por usuario/senha
                 .addFilterBefore(new JwtAuthFilter(jwtService, usuarioDetailsService),
                         UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 
     /**
-     * Usado no login: confere e-mail e senha com o UsuarioDetailsService + PasswordEncoder.
+     * usado no login: confere e-mail e senha com o UsuarioDetailsService + PasswordEncoder.
      */
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuracao) throws Exception {
         return configuracao.getAuthenticationManager();
     }
 
-    /** Algoritmo de hash das senhas. O mesmo usado para gerar os hashes da migration V2. */
+    /** algoritmo de hash das senhas. o mesmo usado para gerar os hashes da migration V2. */
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();

@@ -32,9 +32,9 @@ public class OrdemServicoAssembler
             model.add(linkTo(methodOn(ChamadoController.class).buscarPorId(os.chamadoId())).withRel("chamado"));
         }
 
-        // AGENDADA -> iniciar -> EM_EXECUCAO -> concluir; cancelar enquanto não concluída.
-        // Cada link exige o status certo E um perfil que possa executar a ação.
-        // (methodOn recebe null no usuário: o parâmetro só existe na execução, não na URL)
+        // AGENDADA -> iniciar -> EM_EXECUCAO -> concluir; cancelar enquanto nao concluida.
+        // cada link exige o status certo e um perfil que possa executar a acao.
+        // (methodOn recebe null no usuario: o parametro so existe na execucao, nao na URL)
         boolean podeExecutar = Permissoes.usuarioTemPerfil(Perfil.ADMIN, Perfil.TECNICO);
         boolean podeGerenciar = Permissoes.usuarioTemPerfil(Perfil.ADMIN, Perfil.ATENDENTE);
         if (podeExecutar && os.status().podeIniciar()) {

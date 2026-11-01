@@ -6,7 +6,7 @@ import { Chamado, ChamadoRequest, Prioridade, StatusChamado } from '../../core/m
 import { Colecao, itensDaColecao } from '../../core/models/hal.model';
 import { criarParametros } from '../../shared/utils/filtros';
 
-/** Comunicação com /api/chamados. As mudanças de status usam os links (HateoasService). */
+/** comunicacao com /api/chamados. as mudancas de status usam os links (HateoasService). */
 @Injectable({ providedIn: 'root' })
 export class ChamadoService {
   private readonly http = inject(HttpClient);
@@ -19,7 +19,7 @@ export class ChamadoService {
       .pipe(map((colecao) => itensDaColecao(colecao, 'chamados')));
   }
 
-  /** Quem abre o chamado é o usuário do token: a API pega essa informação do JWT. */
+  /** quem abre o chamado e o usuario do token: a API pega essa informacao do JWT. */
   abrir(chamado: ChamadoRequest): Observable<Chamado> {
     return this.http.post<Chamado>(this.url, chamado);
   }

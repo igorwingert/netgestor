@@ -8,8 +8,8 @@ import jakarta.validation.constraints.Positive;
 import java.time.LocalDate;
 
 /**
- * Dados de entrada do contrato. O número é gerado pelo sistema e o status começa ATIVO
- * (as mudanças de status são feitas por ações próprias, não pelo PUT).
+ * dados de entrada do contrato. o numero e gerado pelo sistema e o status comeca ATIVO
+ * (as mudancas de status sao feitas por acoes proprias, nao pelo PUT).
  */
 public record ContratoRequest(
         @NotNull(message = "O cliente é obrigatório")
@@ -21,7 +21,7 @@ public record ContratoRequest(
         @NotNull(message = "O endereço de instalação é obrigatório")
         Long enderecoInstalacaoId,
 
-        /* obrigatórios para planos de FIBRA; não devem ser enviados para planos via RADIO */
+        /* obrigatorios para planos de FIBRA; nao devem ser enviados para planos via RADIO */
         Long ctoId,
 
         @Positive(message = "A porta da CTO deve ser maior que zero")

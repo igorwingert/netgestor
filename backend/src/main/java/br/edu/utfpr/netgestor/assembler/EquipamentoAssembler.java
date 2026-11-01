@@ -29,7 +29,7 @@ public class EquipamentoAssembler
                     .withRel("contrato"));
         }
 
-        // Comodato: em ESTOQUE pode ser vinculado; INSTALADO pode ser desvinculado
+        // comodato: em ESTOQUE pode ser vinculado; INSTALADO pode ser desvinculado
         boolean podeOperar = Permissoes.usuarioTemPerfil(Perfil.ADMIN, Perfil.TECNICO);
         if (podeOperar && equipamento.status().podeVincular()) {
             model.add(linkTo(methodOn(EquipamentoController.class).vincular(id, null)).withRel("vincular"));

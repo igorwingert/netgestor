@@ -19,8 +19,8 @@ public interface FaturaRepository extends JpaRepository<Fatura, Long> {
 
     /**
      * GET /api/faturas?status=VENCIDA&competencia=2026-10  e  GET /api/contratos/{id}/faturas
-     * O CAST é necessário porque o driver do PostgreSQL envia datas sem tipo definido,
-     * e o banco não consegue resolver "? IS NULL" sozinho ("could not determine data type").
+     * o CAST e necessario porque o driver do PostgreSQL envia datas sem tipo definido,
+     * e o banco nao consegue resolver "? IS NULL" sozinho ("could not determine data type").
      */
     @EntityGraph(attributePaths = {"contrato", "contrato.cliente"})
     @Query("""

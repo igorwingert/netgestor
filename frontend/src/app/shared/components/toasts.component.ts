@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { ToastService } from '../../core/toast.service';
 
-/** Exibe as mensagens do ToastService no canto da tela (verde = sucesso, vermelho = erro). */
+/** exibe as mensagens do ToastService no canto da tela (verde = sucesso, vermelho = erro). */
 @Component({
   selector: 'app-toasts',
   template: `

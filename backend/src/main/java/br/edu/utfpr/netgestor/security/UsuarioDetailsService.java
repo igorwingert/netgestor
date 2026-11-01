@@ -8,9 +8,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * Ensina o Spring Security a buscar um usuário no banco pelo e-mail.
- * É usado em dois momentos: no login (para conferir a senha) e
- * em cada requisição com token (para carregar o usuário dono do token).
+ * ensina o Spring Security a buscar um usuario no banco pelo e-mail.
+ * e usado em dois momentos: no login (para conferir a senha) e
+ * em cada requisicao com token (para carregar o usuario dono do token).
  */
 @Service
 @RequiredArgsConstructor

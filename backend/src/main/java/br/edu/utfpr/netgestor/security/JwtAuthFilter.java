@@ -17,23 +17,23 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 
 /**
- * Filtro executado UMA vez em cada requisição, antes dos controllers.
+ * filtro executado uma vez em cada requisicao, antes dos controllers.
  *
- * 1. Lê o header "Authorization: Bearer <token>".
- * 2. Valida o token (assinatura e expiração) e descobre o e-mail do usuário.
- * 3. Carrega o usuário do banco e o coloca no SecurityContext: a partir daí,
- *    para o Spring, a requisição está autenticada com o perfil daquele usuário.
+ * 1. le o header "Authorization: Bearer <token>".
+ * 2. valida o token (assinatura e expiracao) e descobre o e-mail do usuario.
+ * 3. carrega o usuario do banco e o coloca no SecurityContext: a partir dai,
+ *    para o Spring, a requisicao esta autenticada com o perfil daquele usuario.
  *
- * Se não houver token ou ele for inválido, o filtro apenas segue adiante sem autenticar.
- * Quem devolve o 401 é o AutenticacaoEntryPoint, quando a rota exige login.
+ * se nao houver token ou ele for invalido, o filtro apenas segue adiante sem autenticar.
+ * quem devolve o 401 e o AutenticacaoEntryPoint, quando a rota exige login.
  *
- * Não é um @Component de propósito: é criado no SecurityConfig, para não ser
+ * nao e um @Component de proposito: e criado no SecurityConfig, para nao ser
  * registrado duas vezes (uma pelo Spring Boot e outra pelo Spring Security).
  */
 @RequiredArgsConstructor
 public class JwtAuthFilter extends OncePerRequestFilter {
 
-    /** Atributo da requisição com o motivo da falha, lido pelo AutenticacaoEntryPoint. */
+    /** atributo da requisicao com o motivo da falha, lido pelo AutenticacaoEntryPoint. */
     public static final String ATRIBUTO_ERRO = "netgestor.erroAutenticacao";
 
     private static final String PREFIXO = "Bearer ";
@@ -53,8 +53,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         String token = header.substring(PREFIXO.length());
         try {
             String email = jwtService.extrairEmail(token);
-            // Busca o usuário a cada requisição: se ele for desativado ou mudar de perfil,
-            // o efeito é imediato, mesmo com um token ainda dentro da validade.
+            // busca o usuario a cada requisicao: se ele for desativado ou mudar de perfil,
+            // o efeito e imediato, mesmo com um token ainda dentro da validade.
             UsuarioLogado usuario = usuarioDetailsService.loadUserByUsername(email);
             if (usuario.isEnabled()) {
                 var autenticacao = new UsernamePasswordAuthenticationToken(usuario, null, usuario.getAuthorities());

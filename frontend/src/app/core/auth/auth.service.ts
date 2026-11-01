@@ -9,12 +9,12 @@ const CHAVE_TOKEN = 'netgestor.token';
 const CHAVE_USUARIO = 'netgestor.usuario';
 
 /**
- * Autenticação no frontend.
+ * autenticacao no frontend.
  *
- * - login(): chama POST /api/auth/login e guarda o token JWT e os dados do usuário no localStorage
- *   (assim o login continua valendo se a página for recarregada);
- * - o token é enviado em todas as requisições pelo authInterceptor;
- * - usuario() é um signal: menu, guards e telas reagem automaticamente ao login/logout.
+ * - login(): chama POST /api/auth/login e guarda o token JWT e os dados do usuario no localStorage
+ *   (assim o login continua valendo se a pagina for recarregada);
+ * - o token e enviado em todas as requisicoes pelo authInterceptor;
+ * - usuario() e um signal: menu, guards e telas reagem automaticamente ao login/logout.
  */
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -23,7 +23,7 @@ export class AuthService {
 
   private readonly usuarioLogado = signal<Usuario | null>(this.lerUsuarioSalvo());
 
-  /** Usuário logado (somente leitura para o resto da aplicação). */
+  /** usuario logado (somente leitura para o resto da aplicacao). */
   readonly usuario = this.usuarioLogado.asReadonly();
   readonly autenticado = computed(() => this.usuarioLogado() !== null);
 
@@ -53,7 +53,7 @@ export class AuthService {
     return usuario !== null && perfis.includes(usuario.perfil);
   }
 
-  /** Ao abrir a aplicação, recupera o login salvo, desde que o token ainda não tenha expirado. */
+  /** ao abrir a aplicacao, recupera o login salvo, desde que o token ainda nao tenha expirado. */
   private lerUsuarioSalvo(): Usuario | null {
     const token = localStorage.getItem(CHAVE_TOKEN);
     const usuario = localStorage.getItem(CHAVE_USUARIO);
@@ -66,8 +66,8 @@ export class AuthService {
   }
 
   /**
-   * O payload do JWT é apenas Base64 (não é criptografado), então dá para ler
-   * a data de expiração ("exp", em segundos) sem chamar a API.
+   * o payload do JWT e apenas Base64 (nao e criptografado), entao da para ler
+   * a data de expiracao ("exp", em segundos) sem chamar a API.
    */
   private tokenExpirado(token: string): boolean {
     try {

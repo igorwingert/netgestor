@@ -25,7 +25,7 @@ public class EquipamentoService {
     private final OrdemServicoRepository ordemServicoRepository;
     private final ContratoService contratoService;
 
-    /** Filtros opcionais: status, tipo e contratoId (null = sem filtro). */
+    /** filtros opcionais: status, tipo e contratoId (null = sem filtro). */
     @Transactional(readOnly = true)
     public List<EquipamentoResponse> listar(StatusEquipamento status, TipoEquipamento tipo, Long contratoId) {
         return equipamentoRepository.buscar(status, tipo, contratoId).stream()
@@ -33,10 +33,10 @@ public class EquipamentoService {
                 .toList();
     }
 
-    /** Sub-recurso GET /api/contratos/{contratoId}/equipamentos (equipamentos em comodato). */
+    /** sub-recurso GET /api/contratos/{contratoId}/equipamentos (equipamentos em comodato). */
     @Transactional(readOnly = true)
     public List<EquipamentoResponse> listarPorContrato(Long contratoId) {
-        contratoService.buscarEntidade(contratoId); // 404 se o contrato não existir
+        contratoService.buscarEntidade(contratoId); // 404 se o contrato nao existir
         return listar(null, null, contratoId);
     }
 
@@ -50,7 +50,7 @@ public class EquipamentoService {
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Equipamento " + id + " não encontrado"));
     }
 
-    /** Todo equipamento novo entra no ESTOQUE (o padrão da entidade). */
+    /** todo equipamento novo entra no ESTOQUE (o padrao da entidade). */
     @Transactional
     public EquipamentoResponse cadastrar(EquipamentoRequest request) {
         Equipamento equipamento = new Equipamento();
@@ -81,7 +81,7 @@ public class EquipamentoService {
     }
 
     // ---------------------------------------------------------------------
-    // Ações de comodato:
+    // acoes de comodato:
     //   vincular    (ESTOQUE   -> INSTALADO): o equipamento passa a ficar com o contrato
     //   desvincular (INSTALADO -> ESTOQUE):   o equipamento volta para o estoque
     // ---------------------------------------------------------------------

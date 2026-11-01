@@ -19,9 +19,9 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 /**
- * Autenticação:
- *   POST /api/auth/login   público: recebe e-mail/senha e devolve o token JWT (200) ou 401
- *   GET  /api/auth/me      exige token: devolve os dados do usuário logado
+ * autenticacao:
+ *   POST /api/auth/login   publico: recebe e-mail/senha e devolve o token JWT (200) ou 401
+ *   GET  /api/auth/me      exige token: devolve os dados do usuario logado
  */
 @RestController
 @RequestMapping("/api/auth")
@@ -30,13 +30,13 @@ public class AuthController {
 
     private final AutenticacaoService autenticacaoService;
 
-    /** 200 e não 201: o login não cria um recurso, apenas emite um token. */
+    /** 200 e nao 201: o login nao cria um recurso, apenas emite um token. */
     @PostMapping("/login")
     public LoginResponse login(@RequestBody @Valid LoginRequest request) {
         return autenticacaoService.login(request);
     }
 
-    /** @AuthenticationPrincipal injeta o usuário que o JwtAuthFilter colocou no SecurityContext. */
+    /** @AuthenticationPrincipal injeta o usuario que o JwtAuthFilter colocou no SecurityContext. */
     @GetMapping("/me")
     public EntityModel<UsuarioResponse> me(@AuthenticationPrincipal UsuarioLogado usuario) {
         return EntityModel.of(autenticacaoService.usuarioAtual(usuario),

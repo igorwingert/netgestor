@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.time.YearMonth;
 
-/** Recurso /api/faturas, com filtros ?status=VENCIDA&competencia=2026-10 e a ação cancelar. */
+/** Recurso /api/faturas, com filtros ?status=VENCIDA&competencia=2026-10 e a acao cancelar. */
 @PreAuthorize("hasAnyRole('ADMIN', 'ATENDENTE')")
 @RestController
 @RequestMapping("/api/faturas")

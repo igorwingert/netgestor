@@ -5,7 +5,7 @@ import { API_URL } from '../../core/api.config';
 import { Endereco, EnderecoRequest } from '../../core/models/cliente.model';
 import { Colecao, itensDaColecao } from '../../core/models/hal.model';
 
-/** Endereço é sub-recurso do cliente: /api/clientes/{id}/enderecos e /api/enderecos/{id}. */
+/** endereco e sub-recurso do cliente: /api/clientes/{id}/enderecos e /api/enderecos/{id}. */
 @Injectable({ providedIn: 'root' })
 export class EnderecoService {
   private readonly http = inject(HttpClient);

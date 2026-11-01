@@ -17,9 +17,9 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 /**
- * Transforma um ContratoResponse em um EntityModel com links HATEOAS (formato HAL).
+ * transforma um ContratoResponse em um EntityModel com links HATEOAS (formato HAL).
  *
- * Exemplo de resposta de um contrato ATIVO:
+ * exemplo de resposta de um contrato ATIVO:
  * <pre>
  * {
  *   "id": 1, "numero": "CT-2025-0001", "status": "ATIVO", ...,
@@ -33,7 +33,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
  * }
  * </pre>
  *
- * linkTo(methodOn(...)) monta a URL a partir do método do controller: se a rota
+ * linkTo(methodOn(...)) monta a URL a partir do metodo do controller: se a rota
  * mudar no controller, o link muda junto (nada de URL escrita "na mão").
  */
 @Component
@@ -43,7 +43,7 @@ public class ContratoAssembler implements RepresentationModelAssembler<ContratoR
     public EntityModel<ContratoResponse> toModel(ContratoResponse contrato) {
         Long id = contrato.id();
 
-        // Links de navegação visíveis para todos os perfis que leem contratos
+        // links de navegacao visiveis para todos os perfis que leem contratos
         EntityModel<ContratoResponse> model = EntityModel.of(contrato,
                 linkTo(methodOn(ContratoController.class).buscarPorId(id)).withSelfRel(),
                 linkTo(ContratoController.class).withRel("contratos"),
@@ -54,8 +54,8 @@ public class ContratoAssembler implements RepresentationModelAssembler<ContratoR
             model.add(linkTo(methodOn(CtoController.class).buscarPorId(contrato.ctoId())).withRel("cto"));
         }
 
-        // Cliente, plano, endereço, faturas e chamados: só para quem pode acessá-los (ADMIN/ATENDENTE).
-        // Assim o TECNICO não recebe links que dariam 403.
+        // Cliente, plano, endereco, faturas e chamados: so para quem pode acessa-los (ADMIN/ATENDENTE).
+        // assim o TECNICO nao recebe links que dariam 403.
         boolean podeGerenciar = Permissoes.usuarioTemPerfil(Perfil.ADMIN, Perfil.ATENDENTE);
         if (podeGerenciar) {
             model.add(linkTo(methodOn(ClienteController.class).buscarPorId(contrato.clienteId())).withRel("cliente"));
@@ -66,9 +66,9 @@ public class ContratoAssembler implements RepresentationModelAssembler<ContratoR
             model.add(linkTo(methodOn(ContratoController.class).listarChamados(id)).withRel("chamados"));
         }
 
-        // Links condicionais (evidência do nível 3 de Richardson): cada ação só aparece
-        // quando é permitida no status atual E para um perfil que pode executá-la
-        // (o mesmo critério do @PreAuthorize do controller). O frontend mostra os botões a partir deles.
+        // links condicionais (evidencia do nivel 3 de Richardson): cada acao so aparece
+        // quando e permitida no status atual e para um perfil que pode executa-la
+        // (o mesmo criterio do @PreAuthorize do controller). o frontend mostra os botoes a partir deles.
         if (podeGerenciar && contrato.status().podeSuspender()) {
             model.add(linkTo(methodOn(ContratoController.class).suspender(id)).withRel("suspender"));
         }
@@ -81,7 +81,7 @@ public class ContratoAssembler implements RepresentationModelAssembler<ContratoR
         return model;
     }
 
-    /** Coleção: cada item recebe os links de toModel, e a coleção ganha o próprio "self". */
+    /** colecao: cada item recebe os links de toModel, e a colecao ganha o proprio "self". */
     @Override
     public CollectionModel<EntityModel<ContratoResponse>> toCollectionModel(
             Iterable<? extends ContratoResponse> contratos) {

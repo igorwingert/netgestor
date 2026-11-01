@@ -6,7 +6,7 @@ import { Cliente, ClienteRequest } from '../../core/models/cliente.model';
 import { Colecao, itensDaColecao } from '../../core/models/hal.model';
 import { criarParametros } from '../../shared/utils/filtros';
 
-/** Comunicação com o recurso /api/clientes. Os componentes nunca usam o HttpClient direto. */
+/** comunicacao com o recurso /api/clientes. os componentes nunca usam o HttpClient direto. */
 @Injectable({ providedIn: 'root' })
 export class ClienteService {
   private readonly http = inject(HttpClient);

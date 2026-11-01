@@ -9,7 +9,7 @@ import { aplicarErrosNoFormulario, mensagemDoCampo } from '../../shared/utils/er
 import { ContratoService } from '../contratos/contrato.service';
 import { ChamadoService } from './chamado.service';
 
-/** Abertura de chamado (rota /chamados/novo). */
+/** abertura de chamado (rota /chamados/novo). */
 @Component({
   selector: 'app-chamado-form',
   imports: [ReactiveFormsModule, RouterLink],
@@ -33,7 +33,7 @@ export class ChamadoFormComponent implements OnInit {
   });
 
   ngOnInit(): void {
-    // Contrato cancelado não aceita chamados (regra da API): nem oferecemos na lista
+    // Contrato cancelado nao aceita chamados (regra da API): nem oferecemos na lista
     this.contratoService.listar().subscribe((contratos) =>
       this.contratos.set(contratos.filter((c) => c.status !== 'CANCELADO')),
     );

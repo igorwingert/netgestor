@@ -1,4 +1,4 @@
 /**
- * Regras de negócio. Os métodos são transacionais (@Transactional).
+ * regras de negocio. os metodos sao transacionais (@Transactional).
  */
 package br.edu.utfpr.netgestor.service;

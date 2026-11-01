@@ -1,8 +1,8 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
 /**
- * A API guarda o documento sem máscara; na tela mostramos formatado. Uso: {{ cliente.cpfCnpj | documento }}
- * O CNPJ pode ser alfanumérico (ex.: 12.ABC.345/01DE-35), por isso [0-9A-Z] nas 12 primeiras posições.
+ * a API guarda o documento sem mascara; na tela mostramos formatado. uso: {{ cliente.cpfCnpj | documento }}
+ * o CNPJ pode ser alfanumerico (ex.: 12.ABC.345/01DE-35), por isso [0-9A-Z] nas 12 primeiras posicoes.
  */
 @Pipe({ name: 'documento' })
 export class DocumentoPipe implements PipeTransform {

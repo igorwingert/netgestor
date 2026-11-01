@@ -3,8 +3,8 @@ package br.edu.utfpr.netgestor.dto;
 import java.util.List;
 
 /**
- * Resposta de GET /api/ctos/{id}/ocupacao: situação de cada porta da CTO.
- * Contratos cancelados não ocupam porta.
+ * resposta de GET /api/ctos/{id}/ocupacao: situacao de cada porta da CTO.
+ * contratos cancelados nao ocupam porta.
  */
 public record OcupacaoCtoResponse(
         Long ctoId,
@@ -14,7 +14,7 @@ public record OcupacaoCtoResponse(
         int portasLivres,
         List<Porta> portas) {
 
-    /** Uma porta da CTO: livre, ou ocupada por um contrato. */
+    /** uma porta da CTO: livre, ou ocupada por um contrato. */
     public record Porta(
             int numero,
             boolean livre,

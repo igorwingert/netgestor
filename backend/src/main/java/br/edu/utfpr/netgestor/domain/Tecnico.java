@@ -12,7 +12,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-/** Técnico de campo. Cada técnico tem exatamente um usuário para login. */
+/** tecnico de campo. cada tecnico tem exatamente um usuario para login. */
 @Entity
 @Table(name = "tecnico")
 @Getter
@@ -30,7 +30,7 @@ public class Tecnico {
 
     private String especialidade;
 
-    /* Relacionamento 1:1. A coluna usuario_id é UNIQUE no banco, garantindo o "um para um". */
+    /* relacionamento 1:1. a coluna usuario_id e UNIQUE no banco, garantindo o "um para um". */
     @OneToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "usuario_id")
     private Usuario usuario;

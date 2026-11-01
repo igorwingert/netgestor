@@ -9,8 +9,8 @@ import { ClienteService } from './cliente.service';
 import { EnderecoService } from './endereco.service';
 
 /**
- * Cadastro e edição de cliente (rotas /clientes/novo e /clientes/:id).
- * Na edição, mostra também os endereços do cliente (sub-recurso).
+ * cadastro e edicao de cliente (rotas /clientes/novo e /clientes/:id).
+ * na edicao, mostra tambem os enderecos do cliente (sub-recurso).
  */
 @Component({
   selector: 'app-cliente-form',
@@ -24,13 +24,13 @@ export class ClienteFormComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly fb = inject(NonNullableFormBuilder);
 
-  /** Parâmetro :id da rota, recebido como input (withComponentInputBinding no app.config). */
+  /** parametro :id da rota, recebido como input (withComponentInputBinding no app.config). */
   readonly id = input<string>();
   protected readonly clienteId = computed(() => (this.id() ? Number(this.id()) : null));
 
   protected readonly salvando = signal(false);
   protected readonly enderecos = signal<Endereco[]>([]);
-  /** null = cadastrando um endereço novo; número = editando aquele endereço. */
+  /** null = cadastrando um endereco novo; numero = editando aquele endereco. */
   protected readonly enderecoEmEdicao = signal<number | null>(null);
 
   protected readonly form = this.fb.group({
@@ -83,7 +83,7 @@ export class ClienteFormComponent implements OnInit {
           this.toast.sucesso('Cliente atualizado');
           this.router.navigate(['/clientes']);
         } else {
-          // Depois de cadastrar, abre a edição para o usuário incluir os endereços
+          // depois de cadastrar, abre a edicao para o usuario incluir os enderecos
           this.toast.sucesso('Cliente cadastrado. Agora cadastre os endereços.');
           this.router.navigate(['/clientes', cliente.id]);
         }
@@ -96,7 +96,7 @@ export class ClienteFormComponent implements OnInit {
     });
   }
 
-  // ---- Endereços (sub-recurso) ----
+  // ---- enderecos (sub-recurso) ----
 
   private carregarEnderecos(clienteId: number): void {
     this.enderecoService.listarDoCliente(clienteId).subscribe({

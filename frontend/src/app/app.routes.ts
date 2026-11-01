@@ -6,10 +6,10 @@ import { InicioComponent } from './features/inicio/inicio.component';
 import { LoginComponent } from './features/login/login.component';
 
 /**
- * Rotas da aplicação.
+ * rotas da aplicacao.
  * - autenticadoGuard: todas as telas internas exigem login;
- * - perfilGuard + data.perfis: cada módulo só abre para os perfis com acesso na API;
- * - loadComponent: as telas são carregadas sob demanda (lazy loading), deixando o carregamento inicial menor.
+ * - perfilGuard + data.perfis: cada modulo so abre para os perfis com acesso na API;
+ * - loadComponent: as telas sao carregadas sob demanda (lazy loading), deixando o carregamento inicial menor.
  */
 export const routes: Routes = [
   { path: 'login', component: LoginComponent, canActivate: [visitanteGuard], title: 'Login | NetGestor' },

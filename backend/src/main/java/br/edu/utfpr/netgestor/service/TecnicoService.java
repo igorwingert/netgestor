@@ -70,7 +70,7 @@ public class TecnicoService {
         if (usuario.getPerfil() != Perfil.TECNICO) {
             throw new RegraNegocioException("O usuário " + usuario.getEmail() + " não tem o perfil TECNICO");
         }
-        // Relacionamento 1:1: o usuário não pode estar ligado a OUTRO técnico
+        // relacionamento 1:1: o usuario nao pode estar ligado a OUTRO tecnico
         tecnicoRepository.findByUsuarioId(usuario.getId())
                 .filter(outro -> !outro.getId().equals(tecnico.getId()))
                 .ifPresent(outro -> {

@@ -11,14 +11,14 @@ import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
 /**
- * Gera e valida os tokens JWT.
+ * gera e valida os tokens JWT.
  *
- * Um JWT tem três partes separadas por ponto: header.payload.assinatura
+ * um JWT tem tres partes separadas por ponto: header.payload.assinatura
  *   - header:     algoritmo usado (HMAC-SHA)
  *   - payload:    as "claims", ex.: {"sub":"admin@netgestor.com","perfil":"ADMIN","exp":...}
  *   - assinatura: calculada com a chave secreta do servidor
- * O payload é apenas codificado (Base64), não criptografado: qualquer um consegue ler,
- * mas ninguém consegue ALTERAR sem invalidar a assinatura. Por isso não há senha no token.
+ * o payload e apenas codificado (Base64), nao criptografado: qualquer um consegue ler,
+ * mas ninguem consegue alterar sem invalidar a assinatura. por isso nao ha senha no token.
  */
 @Service
 public class JwtService {
@@ -26,7 +26,7 @@ public class JwtService {
     private final SecretKey chave;
     private final long expiracaoMs;
 
-    /** Os valores vêm do application.yml (variáveis de ambiente JWT_SECRET e JWT_EXPIRATION). */
+    /** os valores vem do application.yml (variaveis de ambiente JWT_SECRET e JWT_EXPIRATION). */
     public JwtService(@Value("${netgestor.jwt.secret}") String segredo,
                       @Value("${netgestor.jwt.expiration}") long expiracaoMs) {
         // HMAC exige chave de pelo menos 256 bits (32 caracteres)
@@ -48,8 +48,8 @@ public class JwtService {
     }
 
     /**
-     * Confere a assinatura e a validade e devolve o e-mail (subject) do token.
-     * Lança ExpiredJwtException se o token venceu, ou outra JwtException se for inválido/adulterado.
+     * confere a assinatura e a validade e devolve o e-mail (subject) do token.
+     * lanca ExpiredJwtException se o token venceu, ou outra JwtException se for invalido/adulterado.
      */
     public String extrairEmail(String token) throws JwtException {
         return Jwts.parser()

@@ -19,7 +19,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-/** Cliente do provedor (pessoa física ou jurídica). */
+/** Cliente do provedor (pessoa fisica ou juridica). */
 @Entity
 @Table(name = "cliente")
 @Getter
@@ -33,7 +33,7 @@ public class Cliente {
 
     private String nome;
 
-    /** CPF (11 dígitos) ou CNPJ (14 dígitos), somente números. */
+    /** CPF (11 digitos) ou CNPJ (14 digitos), somente numeros. */
     private String cpfCnpj;
 
     @Enumerated(EnumType.STRING)
@@ -48,20 +48,20 @@ public class Cliente {
     private boolean ativo = true;
 
     /*
-     * Lado "inverso" do relacionamento 1:N: quem tem a coluna cliente_id é o Endereco
-     * (por isso o mappedBy). Os endereços pertencem ao cliente: cascade ALL salva e
-     * exclui junto, e orphanRemoval apaga o endereço que for removido da lista.
+     * lado "inverso" do relacionamento 1:N: quem tem a coluna cliente_id e o Endereco
+     * (por isso o mappedBy). os enderecos pertencem ao cliente: cascade ALL salva e
+     * exclui junto, e orphanRemoval apaga o endereco que for removido da lista.
      */
     @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Endereco> enderecos = new ArrayList<>();
 
-    /** Mantém os dois lados do relacionamento sincronizados. */
+    /** mantem os dois lados do relacionamento sincronizados. */
     public void adicionarEndereco(Endereco endereco) {
         endereco.setCliente(this);
         enderecos.add(endereco);
     }
 
-    /** Executado pelo JPA antes do INSERT: a data de cadastro é sempre a do dia. */
+    /** executado pelo JPA antes do INSERT: a data de cadastro e sempre a do dia. */
     @PrePersist
     void aoCadastrar() {
         if (dataCadastro == null) {

@@ -20,8 +20,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
- * Testa a segurança de ponta a ponta: login, token JWT, 401, 403 e perfis.
- * Usa os usuários da migration V2. Precisa do PostgreSQL rodando (docker compose up -d).
+ * testa a seguranca de ponta a ponta: login, token JWT, 401, 403 e perfis.
+ * usa os usuarios da migration V2. precisa do PostgreSQL rodando (docker compose up -d).
  * @Transactional desfaz no final o que os testes alterarem no banco.
  */
 @SpringBootTest
@@ -70,8 +70,8 @@ class SegurancaIntegrationTest {
     }
 
     /**
-     * Ataque clássico: pegar o token de um técnico e reescrever o payload dizendo que ele é ADMIN.
-     * O payload é só Base64 (qualquer um lê e altera), mas a assinatura deixa de conferir -> 401.
+     * ataque classico: pegar o token de um tecnico e reescrever o payload dizendo que ele e ADMIN.
+     * o payload e so Base64 (qualquer um le e altera), mas a assinatura deixa de conferir -> 401.
      */
     @Test
     void tokenComPayloadAdulteradoDevolve401() throws Exception {
@@ -101,8 +101,8 @@ class SegurancaIntegrationTest {
     }
 
     /**
-     * Corpo válido de propósito: o Spring valida o @RequestBody @Valid ANTES de chamar o método,
-     * e o @PreAuthorize atua na chamada do método. Com corpo inválido, a resposta seria 400.
+     * corpo valido de proposito: o Spring valida o @RequestBody @Valid antes de chamar o metodo,
+     * e o @PreAuthorize atua na chamada do metodo. com corpo invalido, a resposta seria 400.
      */
     @Test
     void tecnicoNaoCadastraCliente() throws Exception {
@@ -116,12 +116,12 @@ class SegurancaIntegrationTest {
 
     @Test
     void linksDeAcaoDependemDoPerfil() throws Exception {
-        // ATENDENTE vê as ações do contrato ATIVO...
+        // ATENDENTE ve as acoes do contrato ATIVO...
         mockMvc.perform(get("/api/contratos/1").header("Authorization", login("atendente@netgestor.com", "atendente123")))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$._links.suspender").exists())
                 .andExpect(jsonPath("$._links.faturas").exists());
-        // ...o TECNICO lê o mesmo contrato, mas sem ações nem links que dariam 403
+        // ...o TECNICO le o mesmo contrato, mas sem acoes nem links que dariam 403
         mockMvc.perform(get("/api/contratos/1").header("Authorization", login("tecnico@netgestor.com", "tecnico123")))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$._links.suspender").doesNotExist())
@@ -131,12 +131,12 @@ class SegurancaIntegrationTest {
 
     @Test
     void tecnicoSoAlteraAsPropriasOrdensDeServico() throws Exception {
-        // OS 3 é do Carlos (tecnico@): a Marina (tecnico2@) recebe 403...
+        // OS 3 e do Carlos (tecnico@): a Marina (tecnico2@) recebe 403...
         mockMvc.perform(patch("/api/ordens-servico/3/concluir")
                         .header("Authorization", login("tecnico2@netgestor.com", "tecnico123")))
                 .andExpect(status().isForbidden())
                 .andExpect(jsonPath("$.mensagem").value(containsString("outro técnico")));
-        // ...e o próprio Carlos consegue concluir
+        // ...e o proprio Carlos consegue concluir
         mockMvc.perform(patch("/api/ordens-servico/3/concluir")
                         .header("Authorization", login("tecnico@netgestor.com", "tecnico123")))
                 .andExpect(status().isOk())

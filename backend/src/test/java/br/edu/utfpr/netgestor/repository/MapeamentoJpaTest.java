@@ -15,12 +15,12 @@ import org.springframework.transaction.annotation.Transactional;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * Lê os dados inseridos pela migration V2 através das entidades JPA,
- * conferindo que cada tipo de relacionamento está mapeado corretamente.
- * Precisa do PostgreSQL rodando (docker compose up -d).
+ * le os dados inseridos pela migration V2 atraves das entidades JPA,
+ * conferindo que cada tipo de relacionamento esta mapeado corretamente.
+ * precisa do PostgreSQL rodando (docker compose up -d).
  *
- * @Transactional mantém a sessão aberta durante o teste (para navegar nos
- * relacionamentos LAZY) e desfaz qualquer alteração no final.
+ * @Transactional mantem a sessao aberta durante o teste (para navegar nos
+ * relacionamentos LAZY) e desfaz qualquer alteracao no final.
  */
 @SpringBootTest
 @Transactional

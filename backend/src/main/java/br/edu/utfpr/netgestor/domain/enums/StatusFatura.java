@@ -1,13 +1,13 @@
 package br.edu.utfpr.netgestor.domain.enums;
 
-/** Situação da fatura mensal. */
+/** situacao da fatura mensal. */
 public enum StatusFatura {
     ABERTA,
     PAGA,
     VENCIDA,
     CANCELADA;
 
-    /** Só fatura em aberto (no prazo ou vencida) recebe pagamento ou pode ser cancelada. */
+    /** so fatura em aberto (no prazo ou vencida) recebe pagamento ou pode ser cancelada. */
     public boolean emAberto() {
         return this == ABERTA || this == VENCIDA;
     }

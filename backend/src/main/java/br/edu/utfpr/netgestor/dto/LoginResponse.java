@@ -1,7 +1,7 @@
 package br.edu.utfpr.netgestor.dto;
 
 /**
- * Resposta do login. O frontend guarda o token e o envia nas próximas requisições:
+ * resposta do login. o frontend guarda o token e o envia nas proximas requisicoes:
  *   Authorization: Bearer <token>
  */
 public record LoginResponse(

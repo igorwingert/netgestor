@@ -9,9 +9,9 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Validação personalizada (Bean Validation) aplicada na classe ClienteRequest:
- * confere o CPF quando o cliente é pessoa FISICA e o CNPJ quando é JURIDICA.
- * Fica na classe (e não no campo) porque depende de dois campos ao mesmo tempo.
+ * validacao personalizada (Bean Validation) aplicada na classe ClienteRequest:
+ * confere o CPF quando o cliente e pessoa FISICA e o CNPJ quando e JURIDICA.
+ * fica na classe (e nao no campo) porque depende de dois campos ao mesmo tempo.
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)

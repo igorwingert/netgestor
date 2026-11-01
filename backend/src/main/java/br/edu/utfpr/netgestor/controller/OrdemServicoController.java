@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-/** Recurso /api/ordens-servico, com filtros ?status=&tecnicoId= e as ações iniciar/concluir/cancelar. */
+/** Recurso /api/ordens-servico, com filtros ?status=&tecnicoId= e as acoes iniciar/concluir/cancelar. */
 @RestController
 @RequestMapping("/api/ordens-servico")
 @RequiredArgsConstructor
@@ -78,7 +78,7 @@ public class OrdemServicoController {
         return ordemServicoAssembler.toModel(ordemServicoService.iniciar(id, usuario));
     }
 
-    /** Além do perfil, o service confere se a OS é do técnico logado (senão, 403). */
+    /** alem do perfil, o service confere se a OS e do tecnico logado (senao, 403). */
     @PreAuthorize("hasAnyRole('ADMIN', 'TECNICO')")
     @PatchMapping("/{id}/concluir")
     public EntityModel<OrdemServicoResponse> concluir(@PathVariable Long id,

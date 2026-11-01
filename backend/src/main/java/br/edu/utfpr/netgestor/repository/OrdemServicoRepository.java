@@ -17,10 +17,10 @@ public interface OrdemServicoRepository extends JpaRepository<OrdemServico, Long
 
     boolean existsByTecnicoId(Long tecnicoId);
 
-    /** Navega no relacionamento N:N: existe OS que usou este equipamento? */
+    /** navega no relacionamento N:N: existe OS que usou este equipamento? */
     boolean existsByEquipamentosId(Long equipamentoId);
 
-    /** Usado para gerar o próximo número (ex.: OS-2026-0006). */
+    /** usado para gerar o proximo numero (ex.: OS-2026-0006). */
     long countByNumeroStartingWith(String prefixo);
 
     /**

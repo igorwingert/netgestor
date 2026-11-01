@@ -1,9 +1,9 @@
 import { Perfil } from '../models/usuario.model';
 
 /**
- * Grupos de perfis usados nas rotas (guards) e no menu.
- * Espelham as regras do @PreAuthorize da API: a API é quem protege de verdade;
- * no frontend, isso serve para não mostrar telas que dariam 403.
+ * grupos de perfis usados nas rotas (guards) e no menu.
+ * espelham as regras do @PreAuthorize da API: a API e quem protege de verdade;
+ * no frontend, isso serve para nao mostrar telas que dariam 403.
  */
 export const TODOS: Perfil[] = ['ADMIN', 'ATENDENTE', 'TECNICO'];
 export const ATENDIMENTO: Perfil[] = ['ADMIN', 'ATENDENTE'];

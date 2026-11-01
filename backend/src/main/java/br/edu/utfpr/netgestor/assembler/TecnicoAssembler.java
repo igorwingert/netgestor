@@ -21,7 +21,7 @@ public class TecnicoAssembler implements RepresentationModelAssembler<TecnicoRes
                 linkTo(methodOn(TecnicoController.class).buscarPorId(id)).withSelfRel(),
                 linkTo(TecnicoController.class).withRel("tecnicos"),
                 linkTo(methodOn(UsuarioController.class).buscarPorId(tecnico.usuarioId())).withRel("usuario"),
-                // o parâmetro opcional ?status vira um link "templated": .../ordens-servico{?status}
+                // o parametro opcional ?status vira um link "templated": .../ordens-servico{?status}
                 linkTo(methodOn(TecnicoController.class).listarOrdensServico(id, null)).withRel("ordensServico"));
     }
 

@@ -15,12 +15,12 @@ import { ContratoService } from './contrato.service';
 import { CtoService } from './cto.service';
 
 /**
- * Cadastro e edição de contrato (rotas /contratos/novo e /contratos/:id/editar).
+ * cadastro e edicao de contrato (rotas /contratos/novo e /contratos/:id/editar).
  *
- * O formulário reage às escolhas do usuário:
- * - escolheu o cliente -> carrega os endereços DELE;
- * - escolheu um plano via rádio -> esconde CTO e porta;
- * - escolheu a CTO -> consulta /ctos/{id}/ocupacao e oferece só as portas livres.
+ * o formulario reage as escolhas do usuario:
+ * - escolheu o cliente -> carrega os enderecos dele;
+ * - escolheu um plano via radio -> esconde CTO e porta;
+ * - escolheu a CTO -> consulta /ctos/{id}/ocupacao e oferece so as portas livres.
  */
 @Component({
   selector: 'app-contrato-form',
@@ -47,10 +47,10 @@ export class ContratoFormComponent implements OnInit {
   protected readonly portasLivres = signal<number[]>([]);
   protected readonly ehFibra = signal(true);
   protected readonly salvando = signal(false);
-  /** Na edição: o contrato como estava antes (a porta atual dele também deve aparecer na lista). */
+  /** na edicao: o contrato como estava antes (a porta atual dele tambem deve aparecer na lista). */
   private readonly original = signal<Contrato | null>(null);
 
-  /** Planos à venda + o plano atual do contrato (mesmo que tenha saído de venda). */
+  /** planos a venda + o plano atual do contrato (mesmo que tenha saido de venda). */
   protected readonly planosDisponiveis = computed(() =>
     this.planos().filter((p) => p.ativo || p.id === this.original()?.planoId),
   );
@@ -66,7 +66,7 @@ export class ContratoFormComponent implements OnInit {
   });
 
   constructor() {
-    // valueChanges avisa cada mudança do campo; takeUntilDestroyed encerra a inscrição ao sair da tela
+    // valueChanges avisa cada mudanca do campo; takeUntilDestroyed encerra a inscricao ao sair da tela
     const campos = this.form.controls;
     campos.clienteId.valueChanges.pipe(takeUntilDestroyed()).subscribe((id) => this.carregarEnderecos(id));
     campos.planoId.valueChanges.pipe(takeUntilDestroyed()).subscribe((id) => this.aoEscolherPlano(id));
@@ -129,7 +129,7 @@ export class ContratoFormComponent implements OnInit {
     if (!clienteId) return;
     this.enderecoService.listarDoCliente(clienteId).subscribe((enderecos) => {
       this.enderecos.set(enderecos);
-      // Se o endereço escolhido não é deste cliente, limpa a escolha
+      // se o endereco escolhido nao e deste cliente, limpa a escolha
       const atual = this.form.controls.enderecoInstalacaoId.value;
       if (!enderecos.some((e) => e.id === atual)) {
         this.form.controls.enderecoInstalacaoId.setValue(null);
@@ -142,7 +142,7 @@ export class ContratoFormComponent implements OnInit {
     const fibra = plano?.tecnologia !== 'RADIO';
     this.ehFibra.set(fibra);
     if (!fibra) {
-      // Plano via rádio não usa CTO (regra da API)
+      // Plano via radio nao usa CTO (regra da API)
       this.form.patchValue({ ctoId: null, portaCto: null });
     }
   }
@@ -154,7 +154,7 @@ export class ContratoFormComponent implements OnInit {
       const livres = ocupacao.portas.filter((p) => p.livre).map((p) => p.numero);
       const original = this.original();
       if (original?.ctoId === ctoId && original.portaCto) {
-        livres.push(original.portaCto); // a porta que o próprio contrato já usa
+        livres.push(original.portaCto); // a porta que o proprio contrato ja usa
         livres.sort((a, b) => a - b);
       }
       this.portasLivres.set(livres);

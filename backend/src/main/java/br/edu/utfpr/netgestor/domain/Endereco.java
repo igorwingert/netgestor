@@ -12,7 +12,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-/** Endereço de um cliente. Pode ser usado como endereço de instalação de contratos. */
+/** endereco de um cliente. pode ser usado como endereco de instalacao de contratos. */
 @Entity
 @Table(name = "endereco")
 @Getter
@@ -24,7 +24,7 @@ public class Endereco {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    /** CEP somente com dígitos (8). */
+    /** CEP somente com digitos (8). */
     private String cep;
 
     private String logradouro;
@@ -39,12 +39,12 @@ public class Endereco {
 
     private String uf;
 
-    /* Lado "dono" do relacionamento: é aqui que fica a chave estrangeira cliente_id. */
+    /* lado "dono" do relacionamento: e aqui que fica a chave estrangeira cliente_id. */
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "cliente_id")
     private Cliente cliente;
 
-    /** Endereço em uma linha, ex.: "Rua XV de Novembro, 1000 - Centro, Curitiba/PR". */
+    /** endereco em uma linha, ex.: "Rua XV de Novembro, 1000 - Centro, Curitiba/PR". */
     public String resumo() {
         return logradouro + ", " + numero + " - " + bairro + ", " + cidade + "/" + uf;
     }

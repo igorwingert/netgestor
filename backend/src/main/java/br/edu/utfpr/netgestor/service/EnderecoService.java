@@ -14,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-/** Endereços são um sub-recurso do cliente: /api/clientes/{clienteId}/enderecos. */
+/** enderecos sao um sub-recurso do cliente: /api/clientes/{clienteId}/enderecos. */
 @Service
 @RequiredArgsConstructor
 public class EnderecoService {
@@ -25,7 +25,7 @@ public class EnderecoService {
 
     @Transactional(readOnly = true)
     public List<EnderecoResponse> listarPorCliente(Long clienteId) {
-        clienteService.buscarEntidade(clienteId); // 404 se o cliente não existir
+        clienteService.buscarEntidade(clienteId); // 404 se o cliente nao existir
         return enderecoRepository.findByClienteIdOrderById(clienteId).stream()
                 .map(EnderecoResponse::de)
                 .toList();
@@ -64,7 +64,7 @@ public class EnderecoService {
             throw new RegraNegocioException(
                     "O endereço é usado como endereço de instalação de um contrato e não pode ser excluído");
         }
-        // orphanRemoval: ao tirar o endereço da lista do cliente, o JPA executa o DELETE
+        // orphanRemoval: ao tirar o endereco da lista do cliente, o JPA executa o DELETE
         endereco.getCliente().getEnderecos().remove(endereco);
     }
 

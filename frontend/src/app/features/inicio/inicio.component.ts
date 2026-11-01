@@ -3,7 +3,7 @@ import { RouterLink } from '@angular/router';
 import { AuthService } from '../../core/auth/auth.service';
 import { ITENS_MENU } from '../../core/layout/menu';
 
-/** Tela inicial: atalhos para os módulos que o perfil do usuário pode acessar. */
+/** tela inicial: atalhos para os modulos que o perfil do usuario pode acessar. */
 @Component({
   selector: 'app-inicio',
   imports: [RouterLink],

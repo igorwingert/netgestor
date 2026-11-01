@@ -15,9 +15,9 @@ import java.time.LocalDate;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * Testa as consultas com filtros opcionais (@Query JPQL) sobre os dados da V2,
+ * testa as consultas com filtros opcionais (@Query JPQL) sobre os dados da V2,
  * tanto com filtro preenchido quanto com filtro nulo ("sem filtro").
- * Precisa do PostgreSQL rodando (docker compose up -d).
+ * precisa do PostgreSQL rodando (docker compose up -d).
  */
 @SpringBootTest
 @Transactional
@@ -37,7 +37,7 @@ class ConsultasJpaTest {
         assertThat(clienteRepository.buscar("silva", "")).hasSize(1);
         assertThat(clienteRepository.buscar("", "11222333")).hasSize(1);
         assertThat(clienteRepository.buscar("", "")).hasSize(7); // 6 da V2 + 1 da V3
-        assertThat(clienteRepository.buscar("", "ABC345")).hasSize(1); // CNPJ alfanumérico (V3)
+        assertThat(clienteRepository.buscar("", "ABC345")).hasSize(1); // CNPJ alfanumerico (V3)
     }
 
     @Test
@@ -54,7 +54,7 @@ class ConsultasJpaTest {
         assertThat(chamadoRepository.buscar(StatusChamado.ABERTO, null, null)).hasSize(2);
     }
 
-    /** Este caso quebrava sem o CAST no filtro de data (erro "could not determine data type"). */
+    /** este caso quebrava sem o CAST no filtro de data (erro "could not determine data type"). */
     @Test
     void faturasPorStatusECompetencia() {
         LocalDate outubro = LocalDate.of(2026, 10, 1);

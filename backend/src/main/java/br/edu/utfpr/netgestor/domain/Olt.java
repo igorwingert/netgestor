@@ -15,7 +15,7 @@ import java.util.List;
 
 /**
  * OLT (Optical Line Terminal): equipamento central da rede de fibra,
- * instalado no POP do provedor. Cada porta PON alimenta uma ou mais CTOs.
+ * instalado no POP do provedor. cada porta PON alimenta uma ou mais CTOs.
  */
 @Entity
 @Table(name = "olt")
@@ -38,7 +38,7 @@ public class Olt {
 
     private Integer totalPortasPon;
 
-    /* Lado inverso do 1:N com Cto (a FK olt_id está na tabela cto). */
+    /* lado inverso do 1:N com Cto (a FK olt_id esta na tabela cto). */
     @OneToMany(mappedBy = "olt")
     private List<Cto> ctos = new ArrayList<>();
 }

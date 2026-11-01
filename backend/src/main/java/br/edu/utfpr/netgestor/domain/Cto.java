@@ -15,8 +15,8 @@ import lombok.Setter;
 import java.math.BigDecimal;
 
 /**
- * CTO (Caixa de Terminação Óptica): caixa instalada no poste que distribui
- * a fibra para os clientes. Cada contrato de fibra ocupa uma porta da CTO.
+ * CTO (caixa de terminacao optica): caixa instalada no poste que distribui
+ * a fibra para os clientes. cada contrato de fibra ocupa uma porta da CTO.
  */
 @Entity
 @Table(name = "cto")
@@ -35,10 +35,10 @@ public class Cto {
     @JoinColumn(name = "olt_id")
     private Olt olt;
 
-    /** Porta PON da OLT que alimenta esta CTO. */
+    /** porta PON da OLT que alimenta esta CTO. */
     private Integer portaPon;
 
-    /** Quantidade de portas disponíveis para clientes. */
+    /** quantidade de portas disponiveis para clientes. */
     private Integer capacidade;
 
     private BigDecimal latitude;

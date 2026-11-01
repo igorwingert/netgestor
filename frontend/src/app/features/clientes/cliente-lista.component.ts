@@ -27,10 +27,10 @@ export class ClienteListaComponent implements OnInit {
     this.carregar();
   }
 
-  /** Consulta específica da API: GET /api/clientes?nome=...&cpfCnpj=... */
+  /** consulta especifica da API: GET /api/clientes?nome=...&cpfCnpj=... */
   carregar(): void {
-    // Se uma busca anterior ainda estiver em andamento, cancela: só vale a resposta da última.
-    // (Sem isso, uma resposta lenta e antiga poderia chegar depois e sobrescrever a lista filtrada.)
+    // se uma busca anterior ainda estiver em andamento, cancela: so vale a resposta da ultima.
+    // (sem isso, uma resposta lenta e antiga poderia chegar depois e sobrescrever a lista filtrada.)
     this.consulta?.unsubscribe();
     this.carregando.set(true);
     this.consulta = this.clienteService.listar(this.filtros.getRawValue()).subscribe({

@@ -22,28 +22,28 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Centraliza o tratamento de erros de todos os controllers.
- * Cada exceção é convertida no mesmo formato JSON (ErroResponse) com o status HTTP adequado,
- * assim os controllers e services não precisam montar respostas de erro.
+ * centraliza o tratamento de erros de todos os controllers.
+ * cada excecao e convertida no mesmo formato JSON (ErroResponse) com o status HTTP adequado,
+ * assim os controllers e services nao precisam montar respostas de erro.
  */
 @Slf4j
 @RestControllerAdvice
 public class TratadorDeErros {
 
-    /** 404: id não encontrado. */
+    /** 404: id nao encontrado. */
     @ExceptionHandler(RecursoNaoEncontradoException.class)
     public ResponseEntity<ErroResponse> recursoNaoEncontrado(RecursoNaoEncontradoException ex,
                                                              HttpServletRequest request) {
         return resposta(HttpStatus.NOT_FOUND, ex.getMessage(), request, List.of());
     }
 
-    /** 409: regra de negócio violada. */
+    /** 409: regra de negocio violada. */
     @ExceptionHandler(RegraNegocioException.class)
     public ResponseEntity<ErroResponse> regraNegocio(RegraNegocioException ex, HttpServletRequest request) {
         return resposta(HttpStatus.CONFLICT, ex.getMessage(), request, List.of());
     }
 
-    /** 401: login com e-mail/senha errados ou usuário desativado. */
+    /** 401: login com e-mail/senha errados ou usuario desativado. */
     @ExceptionHandler(AuthenticationException.class)
     public ResponseEntity<ErroResponse> autenticacao(AuthenticationException ex, HttpServletRequest request) {
         String mensagem = ex instanceof DisabledException
@@ -54,7 +54,7 @@ public class TratadorDeErros {
 
     /**
      * 403: o @PreAuthorize (ou uma regra do service) negou o acesso.
-     * Sem este handler, a exceção cairia no handler genérico e viraria 500.
+     * sem este handler, a excecao cairia no handler generico e viraria 500.
      */
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<ErroResponse> acessoNegado(AccessDeniedException ex, HttpServletRequest request) {
@@ -64,7 +64,7 @@ public class TratadorDeErros {
         return resposta(HttpStatus.FORBIDDEN, mensagem, request, List.of());
     }
 
-    /** 400: Bean Validation (@NotBlank, @Size...) falhou. Lista o erro de cada campo. */
+    /** 400: Bean Validation (@NotBlank, @Size...) falhou. lista o erro de cada campo. */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErroResponse> validacao(MethodArgumentNotValidException ex, HttpServletRequest request) {
         List<ErroResponse.Campo> campos = new ArrayList<>();
@@ -75,7 +75,7 @@ public class TratadorDeErros {
         return resposta(HttpStatus.BAD_REQUEST, "Existem campos inválidos na requisição", request, campos);
     }
 
-    /** 400: JSON malformado ou valor de tipo errado (ex.: enum inexistente, data inválida). */
+    /** 400: JSON malformado ou valor de tipo errado (ex.: enum inexistente, data invalida). */
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<ErroResponse> corpoInvalido(HttpMessageNotReadableException ex, HttpServletRequest request) {
         log.warn("Corpo da requisição inválido: {}", ex.getMostSpecificCause().getMessage());
@@ -84,7 +84,7 @@ public class TratadorDeErros {
                 request, List.of());
     }
 
-    /** 400: parâmetro de URL com tipo errado (ex.: /api/clientes/abc). */
+    /** 400: parametro de URL com tipo errado (ex.: /api/clientes/abc). */
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity<ErroResponse> parametroInvalido(MethodArgumentTypeMismatchException ex,
                                                           HttpServletRequest request) {
@@ -92,13 +92,13 @@ public class TratadorDeErros {
         return resposta(HttpStatus.BAD_REQUEST, mensagem, request, List.of());
     }
 
-    /** 404: URL que não corresponde a nenhum endpoint. */
+    /** 404: URL que nao corresponde a nenhum endpoint. */
     @ExceptionHandler(NoResourceFoundException.class)
     public ResponseEntity<ErroResponse> rotaInexistente(NoResourceFoundException ex, HttpServletRequest request) {
         return resposta(HttpStatus.NOT_FOUND, "Endpoint não encontrado", request, List.of());
     }
 
-    /** 405: verbo HTTP não suportado na rota (ex.: DELETE /api/clientes). */
+    /** 405: verbo HTTP nao suportado na rota (ex.: DELETE /api/clientes). */
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public ResponseEntity<ErroResponse> metodoNaoSuportado(HttpRequestMethodNotSupportedException ex,
                                                            HttpServletRequest request) {
@@ -107,9 +107,9 @@ public class TratadorDeErros {
     }
 
     /**
-     * 409: o banco recusou a operação por uma constraint (UNIQUE, FK, CHECK).
-     * Os services já validam as regras antes; isto é uma rede de segurança
-     * (ex.: duas requisições simultâneas cadastrando o mesmo CPF).
+     * 409: o banco recusou a operacao por uma constraint (UNIQUE, FK, CHECK).
+     * os services ja validam as regras antes; isto e uma rede de seguranca
+     * (ex.: duas requisicoes simultaneas cadastrando o mesmo CPF).
      */
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<ErroResponse> integridade(DataIntegrityViolationException ex, HttpServletRequest request) {
@@ -119,7 +119,7 @@ public class TratadorDeErros {
                 request, List.of());
     }
 
-    /** 500: qualquer erro inesperado. O detalhe vai para o log, não para o cliente da API. */
+    /** 500: qualquer erro inesperado. o detalhe vai para o log, nao para o cliente da API. */
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErroResponse> erroInesperado(Exception ex, HttpServletRequest request) {
         log.error("Erro inesperado em {} {}", request.getMethod(), request.getRequestURI(), ex);

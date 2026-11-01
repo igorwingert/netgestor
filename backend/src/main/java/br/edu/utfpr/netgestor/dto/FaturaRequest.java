@@ -9,8 +9,8 @@ import java.time.LocalDate;
 import java.time.YearMonth;
 
 /**
- * Dados de entrada da fatura. A competência é o mês de referência no formato "2026-11".
- * Valor e vencimento são opcionais: se não forem enviados, usam o valor do plano
+ * dados de entrada da fatura. a competencia e o mes de referencia no formato "2026-11".
+ * valor e vencimento sao opcionais: se nao forem enviados, usam o valor do plano
  * e o dia de vencimento do contrato.
  */
 public record FaturaRequest(

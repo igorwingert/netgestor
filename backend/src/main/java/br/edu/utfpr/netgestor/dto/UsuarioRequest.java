@@ -7,8 +7,8 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 /**
- * Dados de entrada para cadastrar/atualizar um usuário.
- * A senha é obrigatória também no PUT, porque o PUT substitui o recurso inteiro.
+ * dados de entrada para cadastrar/atualizar um usuario.
+ * a senha e obrigatoria tambem no PUT, porque o PUT substitui o recurso inteiro.
  */
 public record UsuarioRequest(
         @NotBlank(message = "O nome é obrigatório")
@@ -20,7 +20,7 @@ public record UsuarioRequest(
         @Size(max = 150, message = "O e-mail deve ter no máximo 150 caracteres")
         String email,
 
-        // o BCrypt considera no máximo 72 bytes da senha
+        // o BCrypt considera no maximo 72 bytes da senha
         @NotBlank(message = "A senha é obrigatória")
         @Size(min = 6, max = 72, message = "A senha deve ter entre 6 e 72 caracteres")
         String senha,
@@ -28,10 +28,10 @@ public record UsuarioRequest(
         @NotNull(message = "O perfil é obrigatório (ADMIN, ATENDENTE ou TECNICO)")
         Perfil perfil,
 
-        /* opcional: se não for enviado, o usuário fica ativo */
+        /* opcional: se nao for enviado, o usuario fica ativo */
         Boolean ativo) {
 
-    /** Construtor compacto do record: normaliza o e-mail antes da validação. */
+    /** construtor compacto do record: normaliza o e-mail antes da validacao. */
     public UsuarioRequest {
         if (email != null) {
             email = email.trim().toLowerCase();

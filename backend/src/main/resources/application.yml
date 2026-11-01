@@ -1,6 +1,6 @@
-# Configuração da API NetGestor.
-# Cada valor sensível vem de uma variável de ambiente; o valor depois dos ":"
-# é o padrão usado em desenvolvimento (bate com o docker-compose.yml).
+# configuracao da API NetGestor.
+# cada valor sensivel vem de uma variavel de ambiente; o valor depois dos ":"
+# e o padrao usado em desenvolvimento (bate com o docker-compose.yml).
 spring:
   application:
     name: netgestor
@@ -12,11 +12,11 @@ spring:
 
   jpa:
     hibernate:
-      # O schema é responsabilidade do Flyway. O Hibernate só confere se as
+      # o schema e responsabilidade do Flyway. o Hibernate so confere se as
       # entidades batem com as tabelas e falha na subida se algo divergir.
       ddl-auto: validate
-    # Desliga o "Open Session in View": as consultas ao banco ficam dentro
-    # dos services (@Transactional), e não durante a escrita da resposta HTTP.
+    # desliga o "Open Session in View": as consultas ao banco ficam dentro
+    # dos services (@Transactional), e nao durante a escrita da resposta HTTP.
     open-in-view: false
     properties:
       hibernate:
@@ -29,12 +29,12 @@ spring:
 server:
   port: 8080
 
-# Configurações próprias do projeto (usadas a partir da etapa 5, segurança JWT)
+# configuracoes proprias do projeto (seguranca jwt e cors)
 netgestor:
   jwt:
-    # Chave HMAC-SHA256: precisa ter pelo menos 32 caracteres.
+    # chave HMAC-SHA256: precisa ter pelo menos 32 caracteres.
     secret: ${JWT_SECRET:netgestor-chave-de-desenvolvimento-troque-em-producao-2026}
-    # Validade do token em milissegundos (padrão: 2 horas)
+    # validade do token em milissegundos (padrao: 2 horas)
     expiration: ${JWT_EXPIRATION:7200000}
   cors:
     allowed-origins: http://localhost:4200

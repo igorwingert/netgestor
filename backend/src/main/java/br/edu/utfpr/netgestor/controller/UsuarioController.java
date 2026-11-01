@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-/** Recurso /api/usuarios (usuários do sistema). */
+/** Recurso /api/usuarios (usuarios do sistema). */
 @PreAuthorize("hasRole('ADMIN')")
 @RestController
 @RequestMapping("/api/usuarios")

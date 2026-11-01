@@ -45,10 +45,10 @@ import org.springframework.web.bind.annotation.RestController;
  *   POST   /api/contratos                            201 + Location
  *   PUT    /api/contratos/{id}                       atualiza
  *   DELETE /api/contratos/{id}                       204
- *   PATCH  /api/contratos/{id}/suspender|reativar|cancelar   ações de status
+ *   PATCH  /api/contratos/{id}/suspender|reativar|cancelar   acoes de status
  *   GET    /api/contratos/{id}/faturas|chamados|ordens-servico|equipamentos   sub-recursos
  *
- * As respostas são EntityModel/CollectionModel: o assembler acrescenta os links (HAL).
+ * as respostas sao EntityModel/CollectionModel: o assembler acrescenta os links (HAL).
  */
 @RestController
 @RequestMapping("/api/contratos")
@@ -84,7 +84,7 @@ public class ContratoController {
     @PostMapping
     public ResponseEntity<EntityModel<ContratoResponse>> cadastrar(@RequestBody @Valid ContratoRequest request) {
         EntityModel<ContratoResponse> model = contratoAssembler.toModel(contratoService.cadastrar(request));
-        // O header Location é o próprio link "self" gerado pelo assembler
+        // o header Location e o proprio link "self" gerado pelo assembler
         return ResponseEntity.created(model.getRequiredLink(IanaLinkRelations.SELF).toUri()).body(model);
     }
 
@@ -101,7 +101,7 @@ public class ContratoController {
         contratoService.excluir(id);
     }
 
-    // ---- Ações (PATCH): devolvem o contrato com o novo status e os novos links ----
+    // ---- acoes (PATCH): devolvem o contrato com o novo status e os novos links ----
 
     @PreAuthorize("hasAnyRole('ADMIN', 'ATENDENTE')")
     @PatchMapping("/{id}/suspender")
@@ -121,7 +121,7 @@ public class ContratoController {
         return contratoAssembler.toModel(contratoService.cancelar(id));
     }
 
-    // ---- Sub-recursos do contrato ----
+    // ---- sub-recursos do contrato ----
 
     @PreAuthorize("hasAnyRole('ADMIN', 'ATENDENTE')")
     @GetMapping("/{id}/faturas")

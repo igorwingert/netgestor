@@ -1,6 +1,6 @@
 package br.edu.utfpr.netgestor.domain.enums;
 
-/** Situação do equipamento: em estoque, instalado num contrato (comodato) ou com defeito. */
+/** situacao do equipamento: em estoque, instalado num contrato (comodato) ou com defeito. */
 public enum StatusEquipamento {
     ESTOQUE,
     INSTALADO,

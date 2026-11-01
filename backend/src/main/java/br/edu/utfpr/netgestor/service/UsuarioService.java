@@ -79,7 +79,7 @@ public class UsuarioService {
 
         usuario.setNome(request.nome());
         usuario.setEmail(request.email());
-        // A senha nunca é gravada pura: guardamos apenas o hash BCrypt
+        // a senha nunca e gravada pura: guardamos apenas o hash BCrypt
         usuario.setSenha(passwordEncoder.encode(request.senha()));
         usuario.setPerfil(request.perfil());
         usuario.setAtivo(!Boolean.FALSE.equals(request.ativo()));

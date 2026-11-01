@@ -4,14 +4,14 @@ import { Perfil } from '../models/usuario.model';
 import { ToastService } from '../toast.service';
 import { AuthService } from './auth.service';
 
-/** Só deixa entrar nas telas internas quem está logado; senão, vai para /login. */
+/** so deixa entrar nas telas internas quem esta logado; senao, vai para /login. */
 export const autenticadoGuard: CanActivateFn = () => {
   const auth = inject(AuthService);
   const router = inject(Router);
   return auth.autenticado() ? true : router.createUrlTree(['/login']);
 };
 
-/** A tela de login não faz sentido para quem já está logado. */
+/** a tela de login nao faz sentido para quem ja esta logado. */
 export const visitanteGuard: CanActivateFn = () => {
   const auth = inject(AuthService);
   const router = inject(Router);
@@ -19,8 +19,8 @@ export const visitanteGuard: CanActivateFn = () => {
 };
 
 /**
- * Guard por perfil: a rota informa quem pode acessá-la em data.perfis.
- * Ex.: { path: 'clientes', canActivate: [perfilGuard], data: { perfis: ['ADMIN', 'ATENDENTE'] } }
+ * guard por perfil: a rota informa quem pode acessa-la em data.perfis.
+ * ex.: { path: 'clientes', canActivate: [perfilGuard], data: { perfis: ['ADMIN', 'ATENDENTE'] } }
  */
 export const perfilGuard: CanActivateFn = (rota) => {
   const auth = inject(AuthService);

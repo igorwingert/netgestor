@@ -22,7 +22,7 @@ import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
-/** Ordem de serviço: trabalho de campo executado por um técnico num contrato. */
+/** ordem de servico: trabalho de campo executado por um tecnico num contrato. */
 @Entity
 @Table(name = "ordem_servico")
 @Getter
@@ -40,7 +40,7 @@ public class OrdemServico {
     @JoinColumn(name = "contrato_id")
     private Contrato contrato;
 
-    /** Opcional: uma instalação, por exemplo, não nasce de um chamado. */
+    /** opcional: uma instalacao, por exemplo, nao nasce de um chamado. */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "chamado_id")
     private Chamado chamado;
@@ -62,9 +62,9 @@ public class OrdemServico {
     private String observacoes;
 
     /*
-     * Relacionamento N:N: uma OS usa vários equipamentos e um equipamento aparece
-     * em várias OS ao longo da vida. O JPA usa a tabela de junção abaixo.
-     * Set (e não List) evita duplicar o mesmo equipamento na mesma OS.
+     * relacionamento N:N: uma OS usa varios equipamentos e um equipamento aparece
+     * em varias OS ao longo da vida. o JPA usa a tabela de juncao abaixo.
+     * Set (e nao List) evita duplicar o mesmo equipamento na mesma OS.
      */
     @ManyToMany
     @JoinTable(

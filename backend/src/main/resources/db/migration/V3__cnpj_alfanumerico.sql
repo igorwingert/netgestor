@@ -1,17 +1,17 @@
 -- =====================================================================
--- V3 - Suporte ao CNPJ alfanumérico
+-- V3 - suporte ao CNPJ alfanumerico
 --
--- Motivo: desde julho de 2026 a Receita Federal emite CNPJs em que as
--- 12 primeiras posições podem conter letras (A-Z) além de números; os 2
--- dígitos verificadores continuam numéricos. Ex.: 12.ABC.345/01DE-35.
--- Os CNPJs antigos (só números) continuam válidos.
+-- motivo: desde julho de 2026 a Receita Federal emite CNPJs em que as
+-- 12 primeiras posicoes podem conter letras (A-Z) alem de numeros; os 2
+-- digitos verificadores continuam numericos. ex.: 12.ABC.345/01DE-35.
+-- os CNPJs antigos (so numeros) continuam validos.
 --
--- Esta é uma evolução do banco feita com o sistema já em uso: em vez de
--- alterar a V1 (que já foi aplicada), criamos uma nova migration. O Flyway
--- aplica apenas as versões que ainda não rodaram em cada banco.
+-- esta e uma evolucao do banco feita com o sistema ja em uso: em vez de
+-- alterar a V1 (que ja foi aplicada), criamos uma nova migration. o Flyway
+-- aplica apenas as versoes que ainda nao rodaram em cada banco.
 -- =====================================================================
 
--- A coluna já comporta 14 caracteres; muda apenas a regra de formato.
+-- a coluna ja comporta 14 caracteres; muda apenas a regra de formato.
 ALTER TABLE cliente DROP CONSTRAINT ck_cliente_documento;
 
 ALTER TABLE cliente ADD CONSTRAINT ck_cliente_documento CHECK (

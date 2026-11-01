@@ -9,7 +9,7 @@ import jakarta.validation.constraints.Positive;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-/** Dados de entrada do pagamento. A fatura vem da URL: POST /api/faturas/{faturaId}/pagamentos. */
+/** dados de entrada do pagamento. a fatura vem da URL: POST /api/faturas/{faturaId}/pagamentos. */
 public record PagamentoRequest(
         @NotNull(message = "A data do pagamento é obrigatória")
         @PastOrPresent(message = "A data do pagamento não pode estar no futuro")

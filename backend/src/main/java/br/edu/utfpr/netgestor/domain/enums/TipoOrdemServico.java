@@ -1,6 +1,6 @@
 package br.edu.utfpr.netgestor.domain.enums;
 
-/** Tipo de serviço de campo executado pelo técnico. */
+/** tipo de servico de campo executado pelo tecnico. */
 public enum TipoOrdemServico {
     INSTALACAO,
     REPARO,

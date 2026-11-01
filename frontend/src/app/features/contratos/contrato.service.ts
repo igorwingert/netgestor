@@ -7,9 +7,9 @@ import { Colecao, itensDaColecao } from '../../core/models/hal.model';
 import { criarParametros } from '../../shared/utils/filtros';
 
 /**
- * Comunicação com o recurso /api/contratos.
- * As ações (suspender, reativar, cancelar) NÃO estão aqui: elas são executadas pelo
- * HateoasService, usando o link que veio no próprio contrato.
+ * comunicacao com o recurso /api/contratos.
+ * as acoes (suspender, reativar, cancelar) nao estao aqui: elas sao executadas pelo
+ * HateoasService, usando o link que veio no proprio contrato.
  */
 @Injectable({ providedIn: 'root' })
 export class ContratoService {

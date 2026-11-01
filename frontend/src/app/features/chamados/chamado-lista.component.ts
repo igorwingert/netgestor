@@ -10,7 +10,7 @@ import { ToastService } from '../../core/toast.service';
 import { StatusBadgeComponent } from '../../shared/components/status-badge.component';
 import { ChamadoService } from './chamado.service';
 
-/** Ciclo de vida do chamado: cada botão corresponde a um link que a API pode mandar. */
+/** ciclo de vida do chamado: cada botao corresponde a um link que a API pode mandar. */
 const ACOES_CHAMADO = [
   { rel: 'iniciar-atendimento', rotulo: 'Iniciar atendimento', icone: 'bi-play-fill', classe: 'btn-outline-primary' },
   { rel: 'resolver', rotulo: 'Resolver', icone: 'bi-check2', classe: 'btn-outline-success' },
@@ -55,7 +55,7 @@ export class ChamadoListaComponent implements OnInit {
     });
   }
 
-  /** Só as ações cujo link veio no chamado (ABERTO -> iniciar-atendimento, etc.). */
+  /** so as acoes cujo link veio no chamado (ABERTO -> iniciar-atendimento, etc.). */
   acoes(chamado: Chamado) {
     return ACOES_CHAMADO.filter((acao) => chamado._links[acao.rel]);
   }
@@ -63,7 +63,7 @@ export class ChamadoListaComponent implements OnInit {
   executar(chamado: Chamado, acao: (typeof ACOES_CHAMADO)[number]): void {
     this.hateoas.executar<Chamado>(chamado._links[acao.rel]).subscribe({
       next: (atualizado) => {
-        // Troca o chamado na lista pela versão nova (novo status e novos links)
+        // troca o chamado na lista pela versao nova (novo status e novos links)
         this.chamados.update((lista) => lista.map((c) => (c.id === atualizado.id ? atualizado : c)));
         this.toast.sucesso(`Chamado ${atualizado.protocolo}: ${atualizado.status.replaceAll('_', ' ')}`);
       },

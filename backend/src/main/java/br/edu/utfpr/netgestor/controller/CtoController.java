@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
-/** Recurso /api/ctos e a consulta de ocupação das portas: /api/ctos/{id}/ocupacao */
+/** Recurso /api/ctos e a consulta de ocupacao das portas: /api/ctos/{id}/ocupacao */
 @RestController
 @RequestMapping("/api/ctos")
 @RequiredArgsConstructor
@@ -67,7 +67,7 @@ public class CtoController {
         ctoService.excluir(id);
     }
 
-    /** Portas usadas e livres da CTO. Não é um recurso com CRUD, então os links ficam aqui mesmo. */
+    /** portas usadas e livres da CTO. nao e um recurso com CRUD, entao os links ficam aqui mesmo. */
     @PreAuthorize("hasAnyRole('ADMIN', 'ATENDENTE', 'TECNICO')")
     @GetMapping("/{id}/ocupacao")
     public EntityModel<OcupacaoCtoResponse> ocupacao(@PathVariable Long id) {

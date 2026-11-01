@@ -33,7 +33,7 @@ public class OrdemServicoService {
     private final TecnicoService tecnicoService;
     private final EquipamentoService equipamentoService;
 
-    /** Filtros opcionais: status, tecnicoId e contratoId (null = sem filtro). */
+    /** filtros opcionais: status, tecnicoId e contratoId (null = sem filtro). */
     @Transactional(readOnly = true)
     public List<OrdemServicoResponse> listar(StatusOrdemServico status, Long tecnicoId, Long contratoId) {
         return ordemServicoRepository.buscar(status, tecnicoId, contratoId).stream()
@@ -41,17 +41,17 @@ public class OrdemServicoService {
                 .toList();
     }
 
-    /** Sub-recurso GET /api/tecnicos/{tecnicoId}/ordens-servico?status= (a agenda do técnico). */
+    /** sub-recurso GET /api/tecnicos/{tecnicoId}/ordens-servico?status= (a agenda do tecnico). */
     @Transactional(readOnly = true)
     public List<OrdemServicoResponse> listarPorTecnico(Long tecnicoId, StatusOrdemServico status) {
-        tecnicoService.buscarEntidade(tecnicoId); // 404 se o técnico não existir
+        tecnicoService.buscarEntidade(tecnicoId); // 404 se o tecnico nao existir
         return listar(status, tecnicoId, null);
     }
 
-    /** Sub-recurso GET /api/contratos/{contratoId}/ordens-servico. */
+    /** sub-recurso GET /api/contratos/{contratoId}/ordens-servico. */
     @Transactional(readOnly = true)
     public List<OrdemServicoResponse> listarPorContrato(Long contratoId) {
-        contratoService.buscarEntidade(contratoId); // 404 se o contrato não existir
+        contratoService.buscarEntidade(contratoId); // 404 se o contrato nao existir
         return listar(null, null, contratoId);
     }
 
@@ -91,12 +91,12 @@ public class OrdemServicoService {
             throw new RegraNegocioException("A ordem de serviço " + os.getNumero()
                     + " está concluída e faz parte do histórico: não pode ser excluída");
         }
-        // As linhas da tabela ordem_servico_equipamento são removidas junto
+        // as linhas da tabela ordem_servico_equipamento sao removidas junto
         ordemServicoRepository.delete(os);
     }
 
     // ---------------------------------------------------------------------
-    // Ações: AGENDADA -> iniciar -> EM_EXECUCAO -> concluir -> CONCLUIDA
+    // acoes: AGENDADA -> iniciar -> EM_EXECUCAO -> concluir -> CONCLUIDA
     //        (AGENDADA ou EM_EXECUCAO) -> cancelar -> CANCELADA
     // ---------------------------------------------------------------------
 
@@ -109,7 +109,7 @@ public class OrdemServicoService {
         return OrdemServicoResponse.de(os);
     }
 
-    /** Ao concluir, registra a data/hora de conclusão. */
+    /** ao concluir, registra a data/hora de conclusao. */
     @Transactional
     public OrdemServicoResponse concluir(Long id, UsuarioLogado usuario) {
         OrdemServico os = buscarEntidade(id);
@@ -129,9 +129,9 @@ public class OrdemServicoService {
     }
 
     /**
-     * Regra de acesso que depende do dado (por isso não cabe no @PreAuthorize):
-     * um usuário TECNICO só pode iniciar/concluir as ordens de serviço atribuídas a ele.
-     * O ADMIN pode agir em qualquer OS. Violação -> 403.
+     * regra de acesso que depende do dado (por isso nao cabe no @PreAuthorize):
+     * um usuario TECNICO so pode iniciar/concluir as ordens de servico atribuidas a ele.
+     * o ADMIN pode agir em qualquer OS. violacao -> 403.
      */
     private void validarTecnicoResponsavel(OrdemServico os, UsuarioLogado usuario) {
         boolean ehTecnico = usuario.getPerfil() == Perfil.TECNICO;
@@ -157,7 +157,7 @@ public class OrdemServicoService {
                     + " não pertence ao contrato " + contrato.getNumero());
         }
 
-        // Monta o conjunto de equipamentos da OS (relacionamento N:N)
+        // monta o conjunto de equipamentos da OS (relacionamento N:N)
         Set<Equipamento> equipamentos = new HashSet<>();
         if (request.equipamentoIds() != null) {
             for (Long equipamentoId : request.equipamentoIds()) {
@@ -174,7 +174,7 @@ public class OrdemServicoService {
         os.setEquipamentos(equipamentos);
     }
 
-    /** Gera o próximo número do ano: OS-2026-0001, OS-2026-0002... */
+    /** gera o proximo numero do ano: OS-2026-0001, OS-2026-0002... */
     private String gerarNumero() {
         String prefixo = "OS-" + Year.now() + "-";
         long sequencia = ordemServicoRepository.countByNumeroStartingWith(prefixo) + 1;

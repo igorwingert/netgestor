@@ -37,7 +37,7 @@ public class ContratoService {
     private final EnderecoService enderecoService;
     private final CtoService ctoService;
 
-    /** Filtros opcionais: status e clienteId (null = sem filtro). */
+    /** filtros opcionais: status e clienteId (null = sem filtro). */
     @Transactional(readOnly = true)
     public List<ContratoResponse> listar(StatusContrato status, Long clienteId) {
         return contratoRepository.buscar(status, clienteId).stream()
@@ -45,10 +45,10 @@ public class ContratoService {
                 .toList();
     }
 
-    /** Sub-recurso GET /api/clientes/{clienteId}/contratos. */
+    /** sub-recurso GET /api/clientes/{clienteId}/contratos. */
     @Transactional(readOnly = true)
     public List<ContratoResponse> listarPorCliente(Long clienteId) {
-        clienteService.buscarEntidade(clienteId); // 404 se o cliente não existir
+        clienteService.buscarEntidade(clienteId); // 404 se o cliente nao existir
         return listar(null, clienteId);
     }
 
@@ -97,9 +97,9 @@ public class ContratoService {
     }
 
     // ---------------------------------------------------------------------
-    // Ações de mudança de status (PATCH /api/contratos/{id}/<acao>).
-    // A regra de cada transição está no enum StatusContrato (podeSuspender...),
-    // que também é usado pelo ContratoAssembler para decidir quais links exibir.
+    // acoes de mudanca de status (PATCH /api/contratos/{id}/<acao>).
+    // a regra de cada transicao esta no enum StatusContrato (podeSuspender...),
+    // que tambem e usado pelo ContratoAssembler para decidir quais links exibir.
     // ---------------------------------------------------------------------
 
     @Transactional
@@ -122,7 +122,7 @@ public class ContratoService {
     public ContratoResponse cancelar(Long id) {
         Contrato contrato = buscarEntidade(id);
         validarAcao(contrato.getStatus().podeCancelar(), "cancelar", contrato);
-        // Ao cancelar, a porta da CTO fica livre (o índice único da V1 ignora cancelados)
+        // ao cancelar, a porta da CTO fica livre (o indice unico da V1 ignora cancelados)
         contrato.setStatus(StatusContrato.CANCELADO);
         return ContratoResponse.de(contrato);
     }
@@ -140,7 +140,7 @@ public class ContratoService {
         Endereco endereco = enderecoService.buscarEntidade(request.enderecoInstalacaoId());
         Cto cto = request.ctoId() == null ? null : ctoService.buscarEntidade(request.ctoId());
 
-        // Plano inativo não aceita novos contratos (mas contratos antigos podem continuar nele)
+        // Plano inativo nao aceita novos contratos (mas contratos antigos podem continuar nele)
         boolean trocouDePlano = contrato.getPlano() == null || !contrato.getPlano().getId().equals(plano.getId());
         if (!plano.isAtivo() && trocouDePlano) {
             throw new RegraNegocioException("O plano " + plano.getNome() + " está inativo e não aceita novos contratos");
@@ -161,10 +161,10 @@ public class ContratoService {
     }
 
     /**
-     * Regras da rede óptica:
-     * - plano via rádio não usa CTO; plano de fibra exige CTO e porta;
-     * - a porta precisa existir na CTO (até a capacidade);
-     * - a porta não pode estar ocupada por outro contrato não cancelado.
+     * regras da rede optica:
+     * - plano via radio nao usa CTO; plano de fibra exige CTO e porta;
+     * - a porta precisa existir na CTO (ate a capacidade);
+     * - a porta nao pode estar ocupada por outro contrato nao cancelado.
      */
     private void validarPortaCto(Contrato contrato, Plano plano, Cto cto, Integer porta) {
         if (plano.getTecnologia() == Tecnologia.RADIO) {
@@ -188,7 +188,7 @@ public class ContratoService {
                 });
     }
 
-    /** Gera o próximo número do ano: CT-2026-0001, CT-2026-0002... */
+    /** gera o proximo numero do ano: CT-2026-0001, CT-2026-0002... */
     private String gerarNumero() {
         String prefixo = "CT-" + Year.now() + "-";
         long sequencia = contratoRepository.countByNumeroStartingWith(prefixo) + 1;

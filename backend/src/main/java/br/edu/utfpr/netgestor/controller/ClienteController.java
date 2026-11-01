@@ -29,14 +29,14 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * Recurso /api/clientes.
  *
- * O controller só cuida do HTTP (rota, verbo, status, validação de entrada);
- * as regras de negócio ficam no service e os links HATEOAS no assembler.
+ * o controller so cuida do HTTP (rota, verbo, status, validacao de entrada);
+ * as regras de negocio ficam no service e os links HATEOAS no assembler.
  *   GET    /api/clientes?nome=&cpfCnpj=   200 lista (filtros opcionais)
  *   GET    /api/clientes/{id}             200 ou 404
  *   POST   /api/clientes                  201 Created + header Location (ou 400/409)
  *   PUT    /api/clientes/{id}             200 (ou 400/404/409)
  *   DELETE /api/clientes/{id}             204 No Content (ou 404/409)
- *   GET    /api/clientes/{id}/contratos   sub-recurso (os endereços ficam no EnderecoController)
+ *   GET    /api/clientes/{id}/contratos   sub-recurso (os enderecos ficam no EnderecoController)
  */
 @PreAuthorize("hasAnyRole('ADMIN', 'ATENDENTE')")
 @RestController
@@ -65,7 +65,7 @@ public class ClienteController {
     @PostMapping
     public ResponseEntity<EntityModel<ClienteResponse>> cadastrar(@RequestBody @Valid ClienteRequest request) {
         EntityModel<ClienteResponse> model = clienteAssembler.toModel(clienteService.cadastrar(request));
-        // Location: URI do recurso recém-criado (o próprio link "self"), ex.: http://localhost:8080/api/clientes/7
+        // Location: URI do recurso recem-criado (o proprio link "self"), ex.: http://localhost:8080/api/clientes/7
         return ResponseEntity.created(model.getRequiredLink(IanaLinkRelations.SELF).toUri()).body(model);
     }
 

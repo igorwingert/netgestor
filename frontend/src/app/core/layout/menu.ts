@@ -9,7 +9,7 @@ export interface ItemMenu {
   perfis: Perfil[];
 }
 
-/** Itens do menu. Cada usuário só vê os itens do seu perfil. */
+/** itens do menu. cada usuario so ve os itens do seu perfil. */
 export const ITENS_MENU: ItemMenu[] = [
   { rota: '/clientes', rotulo: 'Clientes', icone: 'bi-people', perfis: ATENDIMENTO,
     descricao: 'Cadastro de clientes e seus endereços' },
