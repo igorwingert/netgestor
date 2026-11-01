@@ -450,7 +450,9 @@ escolha de porta livre, detalhe com ações); chamados (abertura, filtros e muda
   script que salva o token), uma pasta por recurso (cadastrar, listar, buscar por ID, atualizar, excluir e consultas) com
   testes negativos (400, 401, 403, 404, 409), e `99 - Fluxos` (ciclo completo do cliente seguindo os links HATEOAS).
 - A autorização `Bearer {{token}}` é herdada da coleção. Os dados únicos (CPF, CNPJ, e-mail, MAC, IP) são gerados a cada
-  execução e cada pasta exclui o que cria, então a coleção pode ser executada várias vezes seguidas.
+  execução e as pastas de recurso excluem o que criam, então a coleção pode ser executada várias vezes seguidas. A pasta
+  `99 - Fluxos` é a exceção: de propósito, ela deixa no banco o histórico do fluxo (um cliente, um contrato cancelado e
+  uma fatura paga), como aconteceria num provedor de verdade.
 
 Com o banco e a API rodando:
 
@@ -479,7 +481,15 @@ No Postman: importar os dois arquivos, selecionar o environment **NetGestor - Lo
 
 ## 15. Referências
 
-- Materiais da disciplina de Tecnologia em Desenvolvimento de Sistemas, UTFPR. **[Igor: completar com os materiais/aulas utilizados]**
+- Materiais da disciplina de Tecnologia em Desenvolvimento de Sistemas, UTFPR:
+  - **API: Conceitos e teoria:** 01 - Introdução e desenvolvimento fullstack; 02 - Fundamentos do REST;
+    Atividade Modelo de Maturidade de Richardson e HATEOAS.
+  - **API: Arquitetura e banco de dados:** 02 - Estrutura do Projeto API com Spring; 04 - Migração de dados com Flyway.
+  - **API: Funcionalidades:** 05 - Tratando erros com ExceptionHandler; 06 - Validando valores inválidos com Bean Validation;
+    08 - Tratando exceção de recurso não encontrado.
+  - **API: Segurança:** 05 - JWT; 06 - JWT aplicado ao projeto.
+  - **Angular:** Serviços e Requisições HTTP; Roteamento e Navegação (Configurando Rotas, Utilizando rotas e navegação);
+    Segurança.
 - Spring Boot Reference Documentation: https://docs.spring.io/spring-boot/
 - Spring Data JPA Reference: https://docs.spring.io/spring-data/jpa/reference/
 - Spring Security Reference: https://docs.spring.io/spring-security/reference/
